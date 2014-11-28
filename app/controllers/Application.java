@@ -5,6 +5,7 @@ import java.util.Random;
 
 import org.marre.SmsSender;
 
+
 import models.Language;
 import models.User;
 import play.*;
@@ -99,15 +100,13 @@ public class Application extends Controller {
     			user.setUserStatus(false);
     			user.save();
     			// Send SMS with clickatell
-    			SmsSender smsSender = SmsSender.getClickatellSender("Mke.manitshana@gmail.com", "ZCFEEACRJDJdQC", "3512534");
+    			SmsSender smsSender = SmsSender.getClickatellSender("Mke.manitshana@gmail.com", "ZCFEEACRJDJdQC", "3456360");
     			// The message that you want to send.
     			String msg = "verification code "+user.getUserVerificationCode();
     			// International number to reciever without leading "+"
     			String reciever = user.getUserName();
-    			// Number of sender (not supported on all transports)
-    			String sender = "My Delivery";
     			smsSender.connect();
-    			String msgids = smsSender.sendTextSms(msg, reciever, sender);
+    			String msgids = smsSender.sendTextSms(msg, reciever);
     			smsSender.disconnect();
     			return ok(Json.toJson(new ErrorResponse(Error.E204.getCode(), Error.E204.getMessage())));
     		}
