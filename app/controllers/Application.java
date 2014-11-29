@@ -1,12 +1,16 @@
 package controllers;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import org.marre.SmsSender;
 
 
 import models.Language;
+import models.Restaurant;
+import models.RestaurantTag;
 import models.User;
 import play.*;
 import play.data.DynamicForm;
@@ -14,6 +18,8 @@ import play.data.Form;
 import play.libs.Json;
 import play.mvc.*;
 
+import viewmodel.RestaurantTagVM;
+import viewmodel.RestaurantVM;
 import views.html.*;
 
 public class Application extends Controller {
@@ -234,4 +240,34 @@ public class Application extends Controller {
 			return Error.E200;
 		}
     }
+    
+    public static class Tags {
+    	public List<String> tags = new ArrayList<>();
+    }
+    
+    public static Result getAllTags() {
+    	List<RestaurantTag> list = RestaurantTag.getAllRestaurantTags();
+    	List<RestaurantTagVM> vmList = new ArrayList<>();
+    	for(RestaurantTag tag: list) {
+    		RestaurantTagVM vm = new RestaurantTagVM(tag);
+    		vmList.add(vm);
+    	}
+    	return ok(Json.toJson(vmList));
+    }
+    
+    public static Result getRestaurantsByTags() {
+    	Form<Tags> form = DynamicForm.form(Tags.class).bindFromRequest();
+    	List<String> tagList = form.get().tags;
+    	List<Restaurant> list = Restaurant.findByTags(tagList);
+    	List<RestaurantVM> VMs = new ArrayList<>();
+    	for(Restaurant restaurant: list) {
+    		RestaurantVM restaurantVM = new RestaurantVM(restaurant);
+    		VMs.add(restaurantVM);
+    	}
+    	
+    	return ok(Json.toJson(VMs));
+    }
+    
+   
+    
 }
