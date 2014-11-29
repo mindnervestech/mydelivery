@@ -18,6 +18,7 @@ import play.db.ebean.Model.Finder;
 public class Restaurant extends Model {
 	
 	@Id
+	@Column(name = "restaurant_id")
 	public Integer restaurantId;
 	public String restaurantName;
 	public String restaurantDescription;
@@ -40,6 +41,8 @@ public class Restaurant extends Model {
 		return find.where(expr).findList();
 	}
 	
-
+	public static Restaurant findById(Integer id) {
+		return find.where().eq("restaurantId", id).findUnique();
+	}
 	
 }

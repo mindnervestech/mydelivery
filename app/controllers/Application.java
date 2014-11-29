@@ -1,5 +1,6 @@
 package controllers;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +10,9 @@ import org.marre.SmsSender;
 
 
 import models.Language;
+import models.Menu;
+import models.MenuCategory;
+import models.MenuItem;
 import models.Restaurant;
 import models.RestaurantTag;
 import models.User;
@@ -18,6 +22,10 @@ import play.data.Form;
 import play.libs.Json;
 import play.mvc.*;
 
+import viewmodel.MenuCategoryVM;
+import viewmodel.MenuItemVM;
+import viewmodel.MenuVM;
+import viewmodel.RestaurantMenuVM;
 import viewmodel.RestaurantTagVM;
 import viewmodel.RestaurantVM;
 import views.html.*;
@@ -268,6 +276,47 @@ public class Application extends Controller {
     	return ok(Json.toJson(VMs));
     }
     
-   
+    public static Result getMenuItems(Integer id) {
+    	SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+    	Restaurant restaurant= Restaurant.findById(id);
+    	
+    	RestaurantMenuVM restaurantMenuVM = new RestaurantMenuVM();
+    	restaurantMenuVM.id = restaurant.restaurantId;
+    	restaurantMenuVM.name = restaurant.restaurantName;
+    	List<MenuVM> menuVMList = new ArrayList<>();
+    	List<Menu> menuList = Menu.findByRestaurantId(restaurant);
+    	for(Menu menu: menuList) {
+        	List<MenuCategoryVM> MenuCategoryVMList = new ArrayList<>();
+    		MenuVM menuVM = new MenuVM();
+    		menuVM.name = menu.menuName;
+    		menuVM.from = format.format(menu.menuTimeStart);
+    		menuVM.to = format.format(menu.menuTimeStop);
+    		
+    		List<MenuCategory> menuCategories = MenuCategory.findByMenuId(menu);
+    		for(MenuCategory menuCat: menuCategories) {
+    			MenuCategoryVM menuCategoryVM = new MenuCategoryVM();
+    			menuCategoryVM.name = menuCat.menuCategoryName;
+	    			List<MenuItem> menuItems = MenuItem.findByMenuCategoryId(menuCat);
+	    			List<MenuItemVM> menuItemNames = new ArrayList<>();
+	    			for(MenuItem item: menuItems) {
+	    				MenuItemVM itemVM = new MenuItemVM();
+	    				itemVM.name = item.menuItemName;
+	    				itemVM.price = item.menuItemPrice;
+	    				menuItemNames.add(itemVM);
+	    				
+	    			}
+	    				menuCategoryVM.items = menuItemNames;
+	    				MenuCategoryVMList.add(menuCategoryVM);
+	    				
+    		}
+    					menuVM.categories = MenuCategoryVMList;
+    					menuVMList.add(menuVM);
+    					
+    	}
+    	
+    	restaurantMenuVM.menus = menuVMList;
+    	
+    	return ok(Json.toJson(restaurantMenuVM));
+    }
     
 }
