@@ -1,5 +1,6 @@
 package controllers;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,21 +11,27 @@ import org.marre.SmsSender;
 
 
 import models.Language;
+import models.Location;
 import models.Menu;
 import models.MenuCategory;
 import models.MenuItem;
+import models.News;
 import models.Restaurant;
 import models.RestaurantTag;
 import models.User;
+import models.UserAddress;
 import play.*;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.libs.Json;
 import play.mvc.*;
+import scala.Array;
 
 import viewmodel.MenuCategoryVM;
 import viewmodel.MenuItemVM;
 import viewmodel.MenuVM;
+import viewmodel.LocationVM;
+import viewmodel.ResponseVM;
 import viewmodel.RestaurantMenuVM;
 import viewmodel.RestaurantTagVM;
 import viewmodel.RestaurantVM;
@@ -70,8 +77,12 @@ public class Application extends Controller {
     				rForm.email.isEmpty()||
     				rForm.firstname==null||
     				rForm.firstname.isEmpty()||
-    				rForm.middlename==null||
-    				rForm.middlename.isEmpty()||
+    				rForm.street==null||
+    				rForm.street.isEmpty()||
+    				rForm.house_bld==null||
+    				rForm.house_bld.isEmpty()||
+    				rForm.suburb==null||
+    				rForm.suburb.isEmpty()||
     				rForm.lastname==null||
     				rForm.lastname.isEmpty()||
     				rForm.language==null||
@@ -113,6 +124,13 @@ public class Application extends Controller {
     			user.setUserLostPasswordCount(0);
     			user.setUserStatus(false);
     			user.save();
+    			UserAddress userAddress = new UserAddress();
+    			userAddress.setUser(user);
+    			userAddress.setUserAddressHouse(rForm.house_bld);
+    			userAddress.setUserAddressStreetName(rForm.street);
+    			userAddress.setLocation(Location.findById(Integer.parseInt(rForm.suburb)));
+    			userAddress.setUserAddressLabel("Default Address");
+    			userAddress.save();
     			// Send SMS with clickatell
     			SmsSender smsSender = SmsSender.getClickatellSender("Mke.manitshana@gmail.com", "ZCFEEACRJDJdQC", "3456360");
     			// The message that you want to send.
@@ -180,7 +198,9 @@ public class Application extends Controller {
     	public String confirmPassword;
     	public String firstname;
     	public String lastname;
-    	public String middlename;
+    	public String street;
+    	public String house_bld;
+    	public String suburb;
     	public String email;
     	public String language;
     	public String additionalDescription;
@@ -317,6 +337,59 @@ public class Application extends Controller {
     	restaurantMenuVM.menus = menuVMList;
     	
     	return ok(Json.toJson(restaurantMenuVM));
+    }
+    
+    
+    public static Result getNewsFeeds() throws ParseException {
+    	DynamicForm formData = DynamicForm.form().bindFromRequest();
+    	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    	Date fromDate = new Date();
+    	Date toDate = new Date();
+    	if(formData.get("from") != "") {
+    		fromDate = format.parse(formData.get("from"));
+    	}
+    	if(formData.get("to") != "") {
+    		toDate = format.parse(formData.get("to"));
+    	}
+    	if(formData.get("from") == "" && formData.get("to") !="") {
+    		List<News> newsList = News.getNewsByToDate(toDate);
+    		for(News news : newsList) {
+    			System.out.println(news.getNewsDate());
+    		}
+    	}
+    	if(formData.get("from") != "" && formData.get("to") =="") {
+    		
+    	}
+    	if(formData.get("from") == "" && formData.get("to") =="") {
+    		
+    	}
+    	if(formData.get("from") != "" && formData.get("to") !="") {
+    		
+    	}
+    	return ok();
+    }
+    
+    public static Result getAllLocations() {
+    	List<Location> locations = Location.getAll();
+    	List<LocationVM> locationVMs = new ArrayList<>();
+    	for(Location location: locations) {
+    		LocationVM vm = new LocationVM();
+    		vm.id = location.getLocationId();
+    		vm.name = location.getLocationName();
+    		locationVMs.add(vm);
+    	}
+    	List<Object> objects = new ArrayList<Object>(locationVMs);
+    	ResponseVM responseVM = new ResponseVM();
+    	if(locations.isEmpty()) {
+    		responseVM.code = "211";
+    		responseVM.message = "Locations not available";
+    		return ok(Json.toJson(responseVM));
+    	} else {
+    		responseVM.code = "212";
+    		responseVM.message = "Locations available";
+    		responseVM.data = objects;
+    		return ok(Json.toJson(responseVM));
+    	}
     }
     
 }

@@ -1,5 +1,7 @@
 package models;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -30,4 +32,11 @@ public class Location extends Model {
 		this.locationName = locationName;
 	}
 	
+	public static List<Location> getAll() {
+		return find.all();
+	}
+	
+	public static Location findById(Integer id) {
+		return find.byId(id);
+	}
 }
