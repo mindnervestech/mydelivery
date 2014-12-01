@@ -87,6 +87,8 @@ public class Application extends Controller {
     				rForm.lastname.isEmpty()||
     				rForm.language==null||
     				rForm.language.isEmpty()||
+    				rForm.additionalDescription==null||
+    				rForm.additionalDescription.isEmpty()||
     				rForm.communicationEmail==null||
     				rForm.communicationSms==null) {
     			return ok(Json.toJson(new ErrorResponse(Error.E202.getCode(), Error.E202.getMessage())));
@@ -380,16 +382,16 @@ public class Application extends Controller {
     	}
     	List<Object> objects = new ArrayList<Object>(locationVMs);
     	ResponseVM responseVM = new ResponseVM();
-    	if(locations.isEmpty()) {
-    		responseVM.code = "211";
-    		responseVM.message = "Locations not available";
-    		return ok(Json.toJson(responseVM));
-    	} else {
+    		try{
     		responseVM.code = "212";
     		responseVM.message = "Locations available";
     		responseVM.data = objects;
     		return ok(Json.toJson(responseVM));
-    	}
+    		} catch(Exception e) {
+    			responseVM.code = "211";
+        		responseVM.message = e.getMessage();
+        		return ok(Json.toJson(responseVM));
+    		}
     }
     
 }
