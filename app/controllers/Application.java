@@ -142,7 +142,7 @@ public class Application extends Controller {
     			smsSender.connect();
     			String msgids = smsSender.sendTextSms(msg, reciever);
     			smsSender.disconnect();
-    			return ok(Json.toJson(new ErrorResponse(Error.E204.getCode(), Error.E204.getMessage())));
+    			return ok(Json.toJson(new ErrorResponse(Error.E200.getCode(), Error.E200.getMessage())));
     		}
     	} catch(Exception e) {
     		return ok(Json.toJson(new ErrorResponse("500",e.getMessage())));
@@ -179,7 +179,7 @@ public class Application extends Controller {
     					u.setUserStatus(true);
     					u.setUserVerified(true);
     					u.update();
-    					return ok(Json.toJson(new ErrorResponse(Error.E209.getCode(), Error.E209.getMessage())));
+    					return ok(Json.toJson(new ErrorResponse(Error.E200.getCode(), Error.E200.getMessage())));
     				}
     			}
     		}
@@ -383,7 +383,7 @@ public class Application extends Controller {
     	List<Object> objects = new ArrayList<Object>(locationVMs);
     	ResponseVM responseVM = new ResponseVM();
     		try{
-    		responseVM.code = "212";
+    		responseVM.code = "200";
     		responseVM.message = "Locations available";
     		responseVM.data = objects;
     		return ok(Json.toJson(responseVM));
