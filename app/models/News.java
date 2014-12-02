@@ -67,4 +67,22 @@ public class News extends Model {
 		return find.where(expr).findList();
 	}
 	
+	public static List<News> getNewsByFromDate(Date fromDate) {
+		Expression expr = Expr.ge("newsDate", fromDate);
+		return find.where(expr).findList();
+	}
+	
+	public static List<News> getAllNews() {
+		return find.all();
+	}
+	
+	public static List<News> getNewsBetween(Date fromDate,Date toDate) {
+		Expression expr = Expr.between("newsDate", fromDate, toDate);
+		return find.where(expr).findList();
+	}
+	
+	public static News findById(Integer id) {
+		return find.byId(id);
+	}
+	
 }

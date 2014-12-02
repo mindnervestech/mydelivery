@@ -15,6 +15,10 @@ import models.Location;
 import models.Menu;
 import models.MenuCategory;
 import models.MenuItem;
+import models.MenuItemCombo;
+import models.MenuItemComboOption;
+import models.MenuItemExtra;
+import models.MenuItemExtraTag;
 import models.News;
 import models.Restaurant;
 import models.RestaurantTag;
@@ -28,9 +32,13 @@ import play.mvc.*;
 import scala.Array;
 
 import viewmodel.MenuCategoryVM;
+import viewmodel.MenuItemComboOptionVM;
+import viewmodel.MenuItemComboVM;
+import viewmodel.MenuItemExtraVM;
 import viewmodel.MenuItemVM;
 import viewmodel.MenuVM;
 import viewmodel.LocationVM;
+import viewmodel.NewsVM;
 import viewmodel.ResponseVM;
 import viewmodel.RestaurantMenuVM;
 import viewmodel.RestaurantTagVM;
@@ -322,8 +330,40 @@ public class Application extends Controller {
 	    			List<MenuItemVM> menuItemNames = new ArrayList<>();
 	    			for(MenuItem item: menuItems) {
 	    				MenuItemVM itemVM = new MenuItemVM();
+	    				itemVM.id = item.menuItemId;
 	    				itemVM.name = item.menuItemName;
 	    				itemVM.price = item.menuItemPrice;
+	    				List<MenuItemCombo> comboList = MenuItemCombo.findByMenuItem(item);
+	    				List<MenuItemComboVM> comboVMList = new ArrayList<>();
+	    				for(MenuItemCombo combo: comboList) {
+	    					MenuItemComboVM vm = new MenuItemComboVM();
+	    					vm.id = combo.getMenuItemComboId();
+	    					vm.name = combo.getMenuItemComboName();
+	    					List<MenuItemComboOption> comboOptionList = MenuItemComboOption.findByMenuItemCombo(combo);
+	    					List<MenuItemComboOptionVM> comboOptionVMList = new ArrayList<>();
+	    						for(MenuItemComboOption comboOption: comboOptionList) {
+	    							MenuItemComboOptionVM optionVM = new MenuItemComboOptionVM();
+	    							optionVM.id = comboOption.getMenuItemComboOptionId();
+	    							optionVM.name = comboOption.getMenuItemComboOptionName();
+	    							optionVM.price = comboOption.getMenuItemComboOptionPrice();
+	    							comboOptionVMList.add(optionVM);
+	    						}
+	    					vm.options = comboOptionVMList;
+	    					comboVMList.add(vm);
+	    				}
+	    				itemVM.combo = comboVMList;
+	    				List<MenuItemExtraVM> menuItemExtraVMList = new ArrayList<>();
+	    				List<MenuItemExtraTag> menuExtraList = MenuItemExtraTag.findByMenuItem(item);
+		    				for(MenuItemExtraTag tag: menuExtraList) {
+		    					MenuItemExtra menuItemExtra = MenuItemExtra.findById(tag.getMenuItemExtra().getMenuItemExtraId());
+		    					MenuItemExtraVM extraVM = new MenuItemExtraVM();
+		    					extraVM.id = menuItemExtra.getMenuItemExtraId();
+		    					extraVM.name = menuItemExtra.getMenuItemExtraName();
+		    					extraVM.price = menuItemExtra.getMenuItemExtraPrice();
+		    					menuItemExtraVMList.add(extraVM);
+		    				}
+		    			itemVM.extra = 	menuItemExtraVMList;
+	    				
 	    				menuItemNames.add(itemVM);
 	    				
 	    			}
@@ -345,6 +385,7 @@ public class Application extends Controller {
     public static Result getNewsFeeds() throws ParseException {
     	DynamicForm formData = DynamicForm.form().bindFromRequest();
     	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    	ResponseVM responseVM = new ResponseVM();
     	Date fromDate = new Date();
     	Date toDate = new Date();
     	if(formData.get("from") != "") {
@@ -353,22 +394,45 @@ public class Application extends Controller {
     	if(formData.get("to") != "") {
     		toDate = format.parse(formData.get("to"));
     	}
+    	try {
+    	List<NewsVM> newsVMList = new ArrayList<>();
     	if(formData.get("from") == "" && formData.get("to") !="") {
     		List<News> newsList = News.getNewsByToDate(toDate);
     		for(News news : newsList) {
-    			System.out.println(news.getNewsDate());
+    			NewsVM newsVM = new NewsVM(news);
+    			newsVMList.add(newsVM);
     		}
     	}
     	if(formData.get("from") != "" && formData.get("to") =="") {
-    		
+    		List<News> newsList = News.getNewsByFromDate(fromDate);
+    		for(News news : newsList) {
+    			NewsVM newsVM = new NewsVM(news);
+    			newsVMList.add(newsVM);
+    		}
     	}
     	if(formData.get("from") == "" && formData.get("to") =="") {
-    		
+    		List<News> newsList = News.getAllNews();
+    		for(News news : newsList) {
+    			NewsVM newsVM = new NewsVM(news);
+    			newsVMList.add(newsVM);
+    		}
     	}
     	if(formData.get("from") != "" && formData.get("to") !="") {
-    		
+    		List<News> newsList = News.getNewsBetween(fromDate, toDate);
+    		for(News news : newsList) {
+    			NewsVM newsVM = new NewsVM(news);
+    			newsVMList.add(newsVM);
+    		}
     	}
-    	return ok();
+    	List<Object> objects = new ArrayList<Object>(newsVMList);
+    	responseVM.code = "200";
+    	responseVM.message = "News Available";
+    	responseVM.data = objects;
+    	} catch(Exception e) {
+    		responseVM.code = "211";
+    		responseVM.message = e.getMessage();
+    	}
+    	return ok(Json.toJson(responseVM));
     }
     
     public static Result getAllLocations() {
@@ -392,6 +456,35 @@ public class Application extends Controller {
         		responseVM.message = e.getMessage();
         		return ok(Json.toJson(responseVM));
     		}
+    }
+    
+    
+    public static Result getNewsById(Integer id) {
+    	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    	ResponseVM responseVM = new ResponseVM();
+    	try{
+    	News news = News.findById(id);
+    	if( news != null) {
+	    	NewsVM vm = new NewsVM();
+	    	vm.id = news.getNewsId();
+	    	vm.header = news.getNewsHeader();
+	    	vm.description = news.getNewsDescription();
+	    	vm.image = news.getNewsImage();
+	    	vm.date = dateFormat.format(news.getNewsDate());
+	    	Object object = vm;
+	    	responseVM.code = "200";
+	    	responseVM.message = "News available";
+	    	responseVM.data.add(object);
+    	} else {
+    		responseVM.code = "211";
+    		responseVM.message = "No news available";
+    	}
+    	
+    	} catch(Exception e) {
+    		responseVM.code = "211";
+    		responseVM.message = e.getMessage();
+    	}
+    	return ok(Json.toJson(responseVM));
     }
     
 }

@@ -17,6 +17,8 @@ GET		/getMenuItems/:restaurantId		controllers.Application.getMenuItems(restauran
 
 POST	/newsfeed						controllers.Application.getNewsFeeds()
 
+GET		/newsfeed/:newsId				controllers.Application.getNewsById(newsId: Integer)
+
 GET		/getLocations					controllers.Application.getAllLocations()
 
 # Map static resources from the /public folder to the /assets URL path
