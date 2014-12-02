@@ -134,14 +134,14 @@ public class Application extends Controller {
     			userAddress.setUserAddressLabel("Default Address");
     			userAddress.save();
     			// Send SMS with clickatell
-    			SmsSender smsSender = SmsSender.getClickatellSender("Mke.manitshana@gmail.com", "ZCFEEACRJDJdQC", "3456360");
+    			/*SmsSender smsSender = SmsSender.getClickatellSender("Mke.manitshana@gmail.com", "ZCFEEACRJDJdQC", "3456360");
     			// The message that you want to send.
     			String msg = "verification code "+user.getUserVerificationCode();
     			// International number to reciever without leading "+"
     			String reciever = user.getUserName();
     			smsSender.connect();
     			String msgids = smsSender.sendTextSms(msg, reciever);
-    			smsSender.disconnect();
+    			smsSender.disconnect();*/
     			return ok(Json.toJson(new ErrorResponse(Error.E200.getCode(), Error.E200.getMessage())));
     		}
     	} catch(Exception e) {
