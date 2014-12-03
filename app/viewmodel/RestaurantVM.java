@@ -1,17 +1,19 @@
 package viewmodel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.OneToOne;
 
 import models.Location;
 import models.Restaurant;
+import models.RestaurantHours;
 
 public class RestaurantVM {
 
 	public int id;
 	public String name;
+	public String description;
+	public List<RestaurantTimeVM> time = new ArrayList<>();
 	
-	public RestaurantVM(Restaurant restaurant) {
-		this.id = restaurant.restaurantId;
-		this.name = restaurant.restaurantName;
-	}
 }

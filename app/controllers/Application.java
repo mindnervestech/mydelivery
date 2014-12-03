@@ -21,6 +21,7 @@ import models.MenuItemExtra;
 import models.MenuItemExtraTag;
 import models.News;
 import models.Restaurant;
+import models.RestaurantHours;
 import models.RestaurantTag;
 import models.User;
 import models.UserAddress;
@@ -42,6 +43,7 @@ import viewmodel.NewsVM;
 import viewmodel.ResponseVM;
 import viewmodel.RestaurantMenuVM;
 import viewmodel.RestaurantTagVM;
+import viewmodel.RestaurantTimeVM;
 import viewmodel.RestaurantVM;
 import views.html.*;
 
@@ -296,14 +298,42 @@ public class Application extends Controller {
     public static Result getRestaurantsByTags() {
     	Form<Tags> form = DynamicForm.form(Tags.class).bindFromRequest();
     	List<String> tagList = form.get().tags;
+    	ResponseVM responseVM = new ResponseVM();
+    	SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+    	try {
     	List<Restaurant> list = Restaurant.findByTags(tagList);
+    	if(!list.isEmpty()) {
     	List<RestaurantVM> VMs = new ArrayList<>();
+    	List<RestaurantTimeVM> timeVMList = new ArrayList<>();
     	for(Restaurant restaurant: list) {
-    		RestaurantVM restaurantVM = new RestaurantVM(restaurant);
+    		List<RestaurantHours> restaurantHoursList = RestaurantHours.findByRestaurant(restaurant);
+    		RestaurantVM restaurantVM = new RestaurantVM();
+    		restaurantVM.id = restaurant.restaurantId;
+    		restaurantVM.name = restaurant.restaurantName;
+    		restaurantVM.description = restaurant.restaurantDescription;
+    		for(RestaurantHours restaurantHours:restaurantHoursList) {
+	    		RestaurantTimeVM time = new RestaurantTimeVM();
+	    		time.day = restaurantHours.getRestaurantHoursDay();
+	    		time.open = format.format(restaurantHours.getRestaurantHoursOpen());
+	    		time.close = format.format(restaurantHours.getRestaurantHoursClose());
+	    		timeVMList.add(time);
+    		}
+    		restaurantVM.time = timeVMList;
     		VMs.add(restaurantVM);
     	}
-    	
-    	return ok(Json.toJson(VMs));
+	    	List<Object> objects = new ArrayList<Object>(VMs);
+	    	responseVM.code = "200";
+	    	responseVM.message = "Restaurant available";
+	    	responseVM.data = objects;
+    	} else {
+    		responseVM.code = "212";
+	    	responseVM.message = "Restaurant not available";
+    	}
+    	} catch(Exception e) {
+    		responseVM.code = "211";
+        	responseVM.message = "Restaurant not available";
+    	}
+    	return ok(Json.toJson(responseVM));
     }
     
     public static Result getMenuItems(Integer id) {
