@@ -304,8 +304,8 @@ public class Application extends Controller {
     	List<Restaurant> list = Restaurant.findByTags(tagList);
     	if(!list.isEmpty()) {
     	List<RestaurantVM> VMs = new ArrayList<>();
-    	List<RestaurantTimeVM> timeVMList = new ArrayList<>();
     	for(Restaurant restaurant: list) {
+    		List<RestaurantTimeVM> timeVMList = new ArrayList<>();
     		List<RestaurantHours> restaurantHoursList = RestaurantHours.findByRestaurant(restaurant);
     		RestaurantVM restaurantVM = new RestaurantVM();
     		restaurantVM.id = restaurant.restaurantId;
