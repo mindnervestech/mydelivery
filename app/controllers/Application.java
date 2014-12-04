@@ -564,38 +564,72 @@ public class Application extends Controller {
     	Form<OrderVM> form = DynamicForm.form(OrderVM.class).bindFromRequest();
     	OrderVM orderVM = form.get();
     	ResponseVM responseVM = new ResponseVM();
-    	User user = User.getUserByUserNameAndPassword(orderVM.credentials.username, orderVM.credentials.password);
-    	if(user == null) {
-    		responseVM.code = "211";
-    		responseVM.message = "Invalid User";
-    	} else {
-    		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-    		String dateComplete = "9999-1-1";
-    		UserAddress userAddress = UserAddress.findByUser(user);
-    		Branch branch = Branch.findByName("Branch 2");
-    		OrderData order = new OrderData();
-    		order.setUser(user);
-    		order.setUserAddress(userAddress);
-    		order.setBranch(branch);
-    		order.setOrderDeliveryFee(orderVM.deliveryFee);
-    		order.setOrderAdminFee(orderVM.adminFee);
-    		order.setOrderDateStart(format.parse(orderVM.orderDate));
-    		order.setOrderDateComplete(format.parse(dateComplete));
-    		order.setOrderNote(" ");
-    		order.save();
-    		for(OrderItemVM itemVM : orderVM.items) {
-    			OrderItem orderItem = new OrderItem();
-    			orderItem.setOrder(order);
-    			orderItem.setMenuItem(MenuItem.findById(itemVM.id));
-    			orderItem.setOrderItemBeverage(false);
-    			orderItem.setOrderItemComboOptions(itemVM.combo);
-    			orderItem.setOrderItemExtraOptions(itemVM.extra);
-    			orderItem.setOrderItemAdditionalInfo(itemVM.additionalInformation);
-    			orderItem.save();
-    		}
-    		responseVM.code = "200";
-    		responseVM.message = "Order Saved Successfully!";
+    	try {
     		
+    			if(orderVM.credentials.username == null ||
+    					orderVM.credentials.username.isEmpty() ||
+    					orderVM.credentials.password == null ||
+    					orderVM.credentials.password.isEmpty() ||
+    					orderVM.deliveryFee == null ||
+    					orderVM.deliveryFee.isNaN() ||
+    					orderVM.adminFee == null ||
+    					orderVM.adminFee.isNaN() ||
+    					orderVM.orderDate == null ||
+    					orderVM.orderDate.isEmpty() ||
+    					orderVM.items == null ||
+    					orderVM.items.isEmpty()) {
+    				return ok(Json.toJson(new ErrorResponse(Error.E202.getCode(), Error.E202.getMessage())));
+    			} else {
+    				for(OrderItemVM item : orderVM.items) {
+    					if(item.id == null ||
+    							item.combo == null ||
+    							item.combo.isEmpty() ||
+    							item.extra == null ||
+    							item.extra.isEmpty() ||
+    							item.additionalInformation == null ||
+    							item.additionalInformation.isEmpty()) {
+    						
+    						return ok(Json.toJson(new ErrorResponse(Error.E202.getCode(), Error.E202.getMessage())));
+    					}
+    				}
+    			}
+    		
+	    	User user = User.getUserByUserNameAndPassword(orderVM.credentials.username, orderVM.credentials.password);
+	    	if(user == null) {
+	    		responseVM.code = "211";
+	    		responseVM.message = "Invalid User";
+	    	} else {
+	    		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+	    		String dateComplete = "9999-1-1";
+	    		UserAddress userAddress = UserAddress.findByUser(user);
+	    		Branch branch = Branch.findByName("Branch 2");
+	    		OrderData order = new OrderData();
+	    		order.setUser(user);
+	    		order.setUserAddress(userAddress);
+	    		order.setBranch(branch);
+	    		order.setOrderDeliveryFee(orderVM.deliveryFee);
+	    		order.setOrderAdminFee(orderVM.adminFee);
+	    		order.setOrderDateStart(format.parse(orderVM.orderDate));
+	    		order.setOrderDateComplete(format.parse(dateComplete));
+	    		order.setOrderNote(" ");
+	    		order.save();
+	    		for(OrderItemVM itemVM : orderVM.items) {
+	    			OrderItem orderItem = new OrderItem();
+	    			orderItem.setOrder(order);
+	    			orderItem.setMenuItem(MenuItem.findById(itemVM.id));
+	    			orderItem.setOrderItemBeverage(false);
+	    			orderItem.setOrderItemComboOptions(itemVM.combo);
+	    			orderItem.setOrderItemExtraOptions(itemVM.extra);
+	    			orderItem.setOrderItemAdditionalInfo(itemVM.additionalInformation);
+	    			orderItem.save();
+	    		}
+	    		responseVM.code = "200";
+	    		responseVM.message = "Order Saved Successfully!";
+	    		
+	    	}
+    	}catch(Exception e) {
+    		responseVM.code = "212";
+    		responseVM.message = e.getMessage();
     	}
     	return ok(Json.toJson(responseVM));
     }
