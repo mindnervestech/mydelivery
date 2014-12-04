@@ -10,6 +10,7 @@ import java.util.Random;
 import org.marre.SmsSender;
 
 
+import models.Branch;
 import models.Language;
 import models.Location;
 import models.Menu;
@@ -20,6 +21,8 @@ import models.MenuItemComboOption;
 import models.MenuItemExtra;
 import models.MenuItemExtraTag;
 import models.News;
+import models.OrderData;
+import models.OrderItem;
 import models.Restaurant;
 import models.RestaurantHours;
 import models.RestaurantTag;
@@ -40,6 +43,8 @@ import viewmodel.MenuItemVM;
 import viewmodel.MenuVM;
 import viewmodel.LocationVM;
 import viewmodel.NewsVM;
+import viewmodel.OrderItemVM;
+import viewmodel.OrderVM;
 import viewmodel.ResponseVM;
 import viewmodel.RestaurantMenuVM;
 import viewmodel.RestaurantTagVM;
@@ -286,13 +291,28 @@ public class Application extends Controller {
     }
     
     public static Result getAllTags() {
+    	ResponseVM responseVM = new ResponseVM();
+    	try {
     	List<RestaurantTag> list = RestaurantTag.getAllRestaurantTags();
+    	if(!list.isEmpty()) {
     	List<RestaurantTagVM> vmList = new ArrayList<>();
     	for(RestaurantTag tag: list) {
     		RestaurantTagVM vm = new RestaurantTagVM(tag);
     		vmList.add(vm);
     	}
-    	return ok(Json.toJson(vmList));
+	    	List<Object> objects = new ArrayList<Object>(vmList);
+	    	responseVM.code = "200";
+	    	responseVM.message = "Restaurant tags available";
+	    	responseVM.data = objects;
+    	} else {
+    		responseVM.code = "212";
+	    	responseVM.message = "Restaurant tags not available";
+    	}
+    	} catch(Exception e) {
+    		responseVM.code = "211";
+        	responseVM.message = "Restaurant tags not available";
+    	}
+    	return ok(Json.toJson(responseVM));
     }
     
     public static Result getRestaurantsByTags() {
@@ -338,9 +358,11 @@ public class Application extends Controller {
     
     public static Result getMenuItems(Integer id) {
     	SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-    	Restaurant restaurant= Restaurant.findById(id);
-    	
+    	ResponseVM responseVM = new ResponseVM();
     	RestaurantMenuVM restaurantMenuVM = new RestaurantMenuVM();
+    	try {
+    	Restaurant restaurant= Restaurant.findById(id);
+    	if(restaurant != null) {
     	restaurantMenuVM.id = restaurant.restaurantId;
     	restaurantMenuVM.name = restaurant.restaurantName;
     	List<MenuVM> menuVMList = new ArrayList<>();
@@ -407,8 +429,19 @@ public class Application extends Controller {
     	}
     	
     	restaurantMenuVM.menus = menuVMList;
-    	
-    	return ok(Json.toJson(restaurantMenuVM));
+	    	Object object = restaurantMenuVM;
+	    	responseVM.code = "200";
+	    	responseVM.message = "Menu available";
+	    	responseVM.data.add(object);
+    	} else {
+    		responseVM.code = "212";
+	    	responseVM.message = "Menu not available";
+    	}
+    	} catch(Exception e) {
+    		responseVM.code = "211";
+    		responseVM.message = e.getMessage();
+    	}
+    	return ok(Json.toJson(responseVM));
     }
     
     
@@ -416,6 +449,7 @@ public class Application extends Controller {
     	DynamicForm formData = DynamicForm.form().bindFromRequest();
     	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
     	ResponseVM responseVM = new ResponseVM();
+    	List<News> newsList = new ArrayList<>();
     	Date fromDate = new Date();
     	Date toDate = new Date();
     	if(formData.get("from") != "") {
@@ -427,37 +461,42 @@ public class Application extends Controller {
     	try {
     	List<NewsVM> newsVMList = new ArrayList<>();
     	if(formData.get("from") == "" && formData.get("to") !="") {
-    		List<News> newsList = News.getNewsByToDate(toDate);
+    		newsList = News.getNewsByToDate(toDate);
     		for(News news : newsList) {
     			NewsVM newsVM = new NewsVM(news);
     			newsVMList.add(newsVM);
     		}
     	}
     	if(formData.get("from") != "" && formData.get("to") =="") {
-    		List<News> newsList = News.getNewsByFromDate(fromDate);
+    		newsList = News.getNewsByFromDate(fromDate);
     		for(News news : newsList) {
     			NewsVM newsVM = new NewsVM(news);
     			newsVMList.add(newsVM);
     		}
     	}
     	if(formData.get("from") == "" && formData.get("to") =="") {
-    		List<News> newsList = News.getAllNews();
+    		newsList = News.getAllNews();
     		for(News news : newsList) {
     			NewsVM newsVM = new NewsVM(news);
     			newsVMList.add(newsVM);
     		}
     	}
     	if(formData.get("from") != "" && formData.get("to") !="") {
-    		List<News> newsList = News.getNewsBetween(fromDate, toDate);
+    		newsList = News.getNewsBetween(fromDate, toDate);
     		for(News news : newsList) {
     			NewsVM newsVM = new NewsVM(news);
     			newsVMList.add(newsVM);
     		}
     	}
-    	List<Object> objects = new ArrayList<Object>(newsVMList);
-    	responseVM.code = "200";
-    	responseVM.message = "News Available";
-    	responseVM.data = objects;
+    	if(!newsList.isEmpty()) {
+	    	List<Object> objects = new ArrayList<Object>(newsVMList);
+	    	responseVM.code = "200";
+	    	responseVM.message = "News Available";
+	    	responseVM.data = objects;
+    	} else {
+    		responseVM.code = "212";
+	    	responseVM.message = "News not Available";
+    	}
     	} catch(Exception e) {
     		responseVM.code = "211";
     		responseVM.message = e.getMessage();
@@ -466,26 +505,30 @@ public class Application extends Controller {
     }
     
     public static Result getAllLocations() {
-    	List<Location> locations = Location.getAll();
-    	List<LocationVM> locationVMs = new ArrayList<>();
-    	for(Location location: locations) {
-    		LocationVM vm = new LocationVM();
-    		vm.id = location.getLocationId();
-    		vm.name = location.getLocationName();
-    		locationVMs.add(vm);
-    	}
-    	List<Object> objects = new ArrayList<Object>(locationVMs);
     	ResponseVM responseVM = new ResponseVM();
-    		try{
-    		responseVM.code = "200";
-    		responseVM.message = "Locations available";
-    		responseVM.data = objects;
-    		return ok(Json.toJson(responseVM));
+    	try {
+		    	List<Location> locations = Location.getAll();
+		if(!locations.isEmpty()) {
+		    	List<LocationVM> locationVMs = new ArrayList<>();
+		    	for(Location location: locations) {
+		    		LocationVM vm = new LocationVM();
+		    		vm.id = location.getLocationId();
+		    		vm.name = location.getLocationName();
+		    		locationVMs.add(vm);
+		    	}
+		    	List<Object> objects = new ArrayList<Object>(locationVMs);
+		    		responseVM.code = "200";
+		    		responseVM.message = "Locations available";
+		    		responseVM.data = objects;
+    	} else {
+    		responseVM.code = "212";
+    		responseVM.message = "Locations not available";
+    	}
     		} catch(Exception e) {
     			responseVM.code = "211";
         		responseVM.message = e.getMessage();
-        		return ok(Json.toJson(responseVM));
     		}
+    	return ok(Json.toJson(responseVM));
     }
     
     
@@ -506,13 +549,53 @@ public class Application extends Controller {
 	    	responseVM.message = "News available";
 	    	responseVM.data.add(object);
     	} else {
-    		responseVM.code = "211";
+    		responseVM.code = "212";
     		responseVM.message = "No news available";
     	}
     	
     	} catch(Exception e) {
     		responseVM.code = "211";
     		responseVM.message = e.getMessage();
+    	}
+    	return ok(Json.toJson(responseVM));
+    }
+    
+    public static Result saveOrder() throws ParseException {
+    	Form<OrderVM> form = DynamicForm.form(OrderVM.class).bindFromRequest();
+    	OrderVM orderVM = form.get();
+    	ResponseVM responseVM = new ResponseVM();
+    	User user = User.getUserByUserNameAndPassword(orderVM.credentials.username, orderVM.credentials.password);
+    	if(user == null) {
+    		responseVM.code = "211";
+    		responseVM.message = "Invalid User";
+    	} else {
+    		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    		String dateComplete = "9999-1-1";
+    		UserAddress userAddress = UserAddress.findByUser(user);
+    		Branch branch = Branch.findByName("Branch 2");
+    		OrderData order = new OrderData();
+    		order.setUser(user);
+    		order.setUserAddress(userAddress);
+    		order.setBranch(branch);
+    		order.setOrderDeliveryFee(orderVM.deliveryFee);
+    		order.setOrderAdminFee(orderVM.adminFee);
+    		order.setOrderDateStart(format.parse(orderVM.orderDate));
+    		order.setOrderDateComplete(format.parse(dateComplete));
+    		order.setOrderNote(" ");
+    		order.save();
+    		for(OrderItemVM itemVM : orderVM.items) {
+    			OrderItem orderItem = new OrderItem();
+    			orderItem.setOrder(order);
+    			orderItem.setMenuItem(MenuItem.findById(itemVM.id));
+    			orderItem.setOrderItemBeverage(false);
+    			orderItem.setOrderItemComboOptions(itemVM.combo);
+    			orderItem.setOrderItemExtraOptions(itemVM.extra);
+    			orderItem.setOrderItemAdditionalInfo(itemVM.additionalInformation);
+    			orderItem.save();
+    		}
+    		responseVM.code = "200";
+    		responseVM.message = "Order Saved Successfully!";
+    		
     	}
     	return ok(Json.toJson(responseVM));
     }

@@ -21,5 +21,7 @@ GET		/newsfeed/:newsId				controllers.Application.getNewsById(newsId: Integer)
 
 GET		/getLocations					controllers.Application.getAllLocations()
 
+POST	/saveOrder						controllers.Application.saveOrder()
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

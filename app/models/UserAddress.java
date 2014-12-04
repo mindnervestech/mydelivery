@@ -62,4 +62,8 @@ public class UserAddress extends Model {
 		this.location = location;
 	}
 	
+	public static UserAddress findByUser(User user) {
+		return find.where().eq("user", user).findUnique();
+	}
+	
 }

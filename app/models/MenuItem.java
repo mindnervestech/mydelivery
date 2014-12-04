@@ -33,4 +33,8 @@ public class MenuItem extends Model {
 	public static List<MenuItem> findByMenuCategoryId(MenuCategory menuCategory) {
 		return find.where().eq("menuCategory", menuCategory).findList();
 	}
+	
+	public static MenuItem findById(Integer id) {
+		return find.byId(id);
+	}
 }
