@@ -566,34 +566,6 @@ public class Application extends Controller {
     	ResponseVM responseVM = new ResponseVM();
     	try {
     		
-    			if(orderVM.credentials.username == null ||
-    					orderVM.credentials.username.isEmpty() ||
-    					orderVM.credentials.password == null ||
-    					orderVM.credentials.password.isEmpty() ||
-    					orderVM.deliveryFee == null ||
-    					orderVM.deliveryFee.isNaN() ||
-    					orderVM.adminFee == null ||
-    					orderVM.adminFee.isNaN() ||
-    					orderVM.orderDate == null ||
-    					orderVM.orderDate.isEmpty() ||
-    					orderVM.items == null ||
-    					orderVM.items.isEmpty()) {
-    				return ok(Json.toJson(new ErrorResponse(Error.E202.getCode(), Error.E202.getMessage())));
-    			} else {
-    				for(OrderItemVM item : orderVM.items) {
-    					if(item.id == null ||
-    							item.combo == null ||
-    							item.combo.isEmpty() ||
-    							item.extra == null ||
-    							item.extra.isEmpty() ||
-    							item.additionalInformation == null ||
-    							item.additionalInformation.isEmpty()) {
-    						
-    						return ok(Json.toJson(new ErrorResponse(Error.E202.getCode(), Error.E202.getMessage())));
-    					}
-    				}
-    			}
-    		
 	    	User user = User.getUserByUserNameAndPassword(orderVM.credentials.username, orderVM.credentials.password);
 	    	if(user == null) {
 	    		responseVM.code = "211";
@@ -625,7 +597,7 @@ public class Application extends Controller {
 	    		}
 	    		responseVM.code = "200";
 	    		responseVM.message = "Order Saved Successfully!";
-	    		
+	    		responseVM.orderId = order.getOrderId();
 	    	}
     	}catch(Exception e) {
     		responseVM.code = "212";
