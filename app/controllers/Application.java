@@ -385,6 +385,10 @@ public class Application extends Controller {
 	    				itemVM.id = item.menuItemId;
 	    				itemVM.name = item.menuItemName;
 	    				itemVM.price = item.menuItemPrice;
+	    				itemVM.description = item.menuItemDescription;
+	    				itemVM.isVegetarian = item.MenuItemVegetarian; 
+	    				itemVM.isSpicy = item.MenuItemSpicy; 
+	    				itemVM.daySchedule = item.menuItemDaySchedule;
 	    				List<MenuItemCombo> comboList = MenuItemCombo.findByMenuItem(item);
 	    				List<MenuItemComboVM> comboVMList = new ArrayList<>();
 	    				for(MenuItemCombo combo: comboList) {
