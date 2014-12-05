@@ -617,18 +617,32 @@ public class Application extends Controller {
     
     public static Result getUserDetails(Integer id) {
     	RegisterForm vm = new RegisterForm();
+    	ResponseVM responseVM = new ResponseVM();
     	User user = User.findById(id);
-    	UserAddress userAddress = UserAddress.findByUser(user);
-    	vm.username = user.getUserName();
-    	vm.firstname = user.getUserFirstname();
-    	vm.lastname = user.getUserLastname();
-    	vm.language = user.getUserLanguage().name();
-    	vm.additionalDescription = user.getUserAdditionalDescription();
-    	vm.email = user.getUserEmailAddress();
-    	vm.house_bld = userAddress.getUserAddressHouse();
-    	vm.street = userAddress.getUserAddressStreetName();
-    	vm.suburb = userAddress.getLocation().getLocationName();
-    	return ok(Json.toJson(vm));
+    	try {
+    	if(user == null) {
+    		responseVM.code = "211";
+    		responseVM.message ="User not available";
+    	} else {
+	    	UserAddress userAddress = UserAddress.findByUser(user);
+	    	vm.username = user.getUserName();
+	    	vm.firstname = user.getUserFirstname();
+	    	vm.lastname = user.getUserLastname();
+	    	vm.language = user.getUserLanguage().name();
+	    	vm.additionalDescription = user.getUserAdditionalDescription();
+	    	vm.email = user.getUserEmailAddress();
+	    	vm.house_bld = userAddress.getUserAddressHouse();
+	    	vm.street = userAddress.getUserAddressStreetName();
+	    	vm.suburb = userAddress.getLocation().getLocationName();
+	    	responseVM.code = "200";
+    		responseVM.message ="User available";
+    		responseVM.data.add(vm);
+    	}
+    	} catch(Exception e) {
+    		responseVM.code = "212";
+    		responseVM.message = e.getMessage();
+    	}
+    	return ok(Json.toJson(responseVM));
     }
     
     
