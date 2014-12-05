@@ -601,6 +601,7 @@ public class Application extends Controller {
 	    			orderItem.setOrderItemBeverage(false);
 	    			orderItem.setOrderItemComboOptions(itemVM.combo);
 	    			orderItem.setOrderItemExtraOptions(itemVM.extra);
+	    			orderItem.setOrderItemPrice(itemVM.price);
 	    			orderItem.setOrderItemAdditionalInfo(itemVM.additionalInformation);
 	    			orderItem.save();
 	    		}
