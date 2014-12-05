@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.marre.SmsSender;
 
 
@@ -211,7 +212,9 @@ public class Application extends Controller {
     
     public static class RegisterForm {
     	public String username;
+    	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     	public String password;
+    	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     	public String confirmPassword;
     	public String firstname;
     	public String lastname;
@@ -221,7 +224,9 @@ public class Application extends Controller {
     	public String email;
     	public String language;
     	public String additionalDescription;
+    	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     	public Boolean communicationSms;
+    	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     	public Boolean communicationEmail;
     }
     
@@ -609,5 +614,22 @@ public class Application extends Controller {
     	}
     	return ok(Json.toJson(responseVM));
     }
+    
+    public static Result getUserDetails(Integer id) {
+    	RegisterForm vm = new RegisterForm();
+    	User user = User.findById(id);
+    	UserAddress userAddress = UserAddress.findByUser(user);
+    	vm.username = user.getUserName();
+    	vm.firstname = user.getUserFirstname();
+    	vm.lastname = user.getUserLastname();
+    	vm.language = user.getUserLanguage().name();
+    	vm.additionalDescription = user.getUserAdditionalDescription();
+    	vm.email = user.getUserEmailAddress();
+    	vm.house_bld = userAddress.getUserAddressHouse();
+    	vm.street = userAddress.getUserAddressStreetName();
+    	vm.suburb = userAddress.getLocation().getLocationName();
+    	return ok(Json.toJson(vm));
+    }
+    
     
 }

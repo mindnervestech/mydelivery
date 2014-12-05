@@ -51,6 +51,10 @@ public class User extends Model {
 		return find.where().eq("userName", username).eq("userVerificationCode", validationCode).findUnique();
 	}
 	
+	public static User findById(Integer id) {
+		return find.byId(id);
+	}
+	
 	public Integer getUserId() {
 		return userId;
 	}
