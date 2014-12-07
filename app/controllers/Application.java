@@ -616,10 +616,10 @@ public class Application extends Controller {
     	return ok(Json.toJson(responseVM));
     }
     
-    public static Result getUserDetails(Integer id) {
+    public static Result getUserDetails(String id) {
     	RegisterForm vm = new RegisterForm();
     	ResponseVM responseVM = new ResponseVM();
-    	User user = User.findById(id);
+    	User user = User.getUserByUserName(id);
     	try {
     	if(user == null) {
     		responseVM.code = "211";
