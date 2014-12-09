@@ -22,6 +22,7 @@ public class OrderItem extends Model {
 	private boolean orderItemBeverage;
 	private String orderItemComboOptions;
 	private String orderItemExtraOptions;
+	private int orderItemQuantity;
 	private String orderItemAdditionalInfo;
 	private double orderItemPrice;
 	
@@ -75,5 +76,12 @@ public class OrderItem extends Model {
 	public void setOrderItemPrice(double orderItemPrice) {
 		this.orderItemPrice = orderItemPrice;
 	}
+	public int getOrderItemQuantity() {
+		return orderItemQuantity;
+	}
+	public void setOrderItemQuantity(int orderItemQuantity) {
+		this.orderItemQuantity = orderItemQuantity;
+	}
+	
 	
 }

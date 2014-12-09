@@ -6,5 +6,6 @@ public class OrderItemVM {
 	public String combo;
 	public String extra;
 	public double price;
+	public int quantity;
 	public String additionalInformation;
 }

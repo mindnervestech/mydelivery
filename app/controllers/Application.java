@@ -623,6 +623,7 @@ public class Application extends Controller {
 	    			orderItem.setOrderItemComboOptions(itemVM.combo);
 	    			orderItem.setOrderItemExtraOptions(itemVM.extra);
 	    			orderItem.setOrderItemPrice(itemVM.price);
+	    			orderItem.setOrderItemQuantity(itemVM.quantity);
 	    			orderItem.setOrderItemAdditionalInfo(itemVM.additionalInformation);
 	    			orderItem.save();
 	    		}
