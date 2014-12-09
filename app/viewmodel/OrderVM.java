@@ -9,5 +9,6 @@ public class OrderVM {
 	public Double deliveryFee;
 	public Double adminFee;
 	public String orderDate;
+	public Integer deliveryAddress;
 	public List<OrderItemVM> items = new ArrayList<>();
 }

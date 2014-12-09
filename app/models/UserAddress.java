@@ -1,5 +1,7 @@
 package models;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -62,8 +64,12 @@ public class UserAddress extends Model {
 		this.location = location;
 	}
 	
-	public static UserAddress findByUser(User user) {
-		return find.where().eq("user", user).findUnique();
+	public static List<UserAddress> findByUser(User user) {
+		return find.where().eq("user", user).findList();
+	}
+	
+	public static UserAddress findById(Integer id) {
+		return find.byId(id);
 	}
 	
 }

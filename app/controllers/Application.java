@@ -36,6 +36,7 @@ import play.libs.Json;
 import play.mvc.*;
 import scala.Array;
 
+import viewmodel.AddressVM;
 import viewmodel.MenuCategoryVM;
 import viewmodel.MenuItemComboOptionVM;
 import viewmodel.MenuItemComboVM;
@@ -51,6 +52,7 @@ import viewmodel.RestaurantMenuVM;
 import viewmodel.RestaurantTagVM;
 import viewmodel.RestaurantTimeVM;
 import viewmodel.RestaurantVM;
+import viewmodel.UserDetailsVM;
 import views.html.*;
 
 public class Application extends Controller {
@@ -582,7 +584,7 @@ public class Application extends Controller {
 	    	} else {
 	    		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 	    		String dateComplete = "9999-1-1";
-	    		UserAddress userAddress = UserAddress.findByUser(user);
+	    		UserAddress userAddress = UserAddress.findById(orderVM.deliveryAddress);
 	    		Branch branch = Branch.findByName("Branch 2");
 	    		OrderData order = new OrderData();
 	    		order.setUser(user);
@@ -617,7 +619,7 @@ public class Application extends Controller {
     }
     
     public static Result getUserDetails(String id) {
-    	RegisterForm vm = new RegisterForm();
+    	UserDetailsVM vm = new UserDetailsVM();
     	ResponseVM responseVM = new ResponseVM();
     	User user = User.getUserByUserName(id);
     	try {
@@ -625,16 +627,22 @@ public class Application extends Controller {
     		responseVM.code = "211";
     		responseVM.message ="User not available";
     	} else {
-	    	UserAddress userAddress = UserAddress.findByUser(user);
+	    	List<UserAddress> userAddressList = UserAddress.findByUser(user);
+	    	List<AddressVM> vmList = new ArrayList();
 	    	vm.username = user.getUserName();
 	    	vm.firstname = user.getUserFirstname();
 	    	vm.lastname = user.getUserLastname();
 	    	vm.language = user.getUserLanguage().name();
 	    	vm.additionalDescription = user.getUserAdditionalDescription();
 	    	vm.email = user.getUserEmailAddress();
-	    	vm.house_bld = userAddress.getUserAddressHouse();
-	    	vm.street = userAddress.getUserAddressStreetName();
-	    	vm.suburb = userAddress.getLocation().getLocationName();
+	    	for(UserAddress address: userAddressList) {
+	    		AddressVM addressVM = new AddressVM();
+	    		addressVM.house_bld = address.getUserAddressHouse();
+	    		addressVM.street = address.getUserAddressStreetName();
+	    		addressVM.suburbName = address.getLocation().getLocationName();
+	    		vmList.add(addressVM);
+	    	}
+	    	vm.address = vmList;
 	    	responseVM.code = "200";
     		responseVM.message ="User available";
     		responseVM.data.add(vm);
@@ -646,5 +654,31 @@ public class Application extends Controller {
     	return ok(Json.toJson(responseVM));
     }
     
+    public static Result addAddress() {
+    	ResponseVM responseVM = new ResponseVM();
+    	try {
+	    	Form<AddressVM> form = DynamicForm.form(AddressVM.class).bindFromRequest();
+	    	AddressVM addressVM = form.get();
+	    	User user = User.getUserByUserNameAndPassword(addressVM.username, addressVM.password);
+	    	if(user == null) {
+	    		responseVM.code = "211";
+	    		responseVM.message = "Invalid User";
+	    	} else {
+		    	UserAddress userAddress = new UserAddress();
+		    	userAddress.setUserAddressLabel("Default Address");
+		    	userAddress.setUser(user);
+		    	userAddress.setUserAddressHouse(addressVM.house_bld);
+		    	userAddress.setUserAddressStreetName(addressVM.street);
+		    	userAddress.setLocation(Location.findById(addressVM.suburb));
+		    	userAddress.save();
+		    	responseVM.code = "200";
+	    		responseVM.message = "Address Saved Successfully!";
+	    	}
+    	} catch(Exception e) {
+    		responseVM.code = "212";
+    		responseVM.message = e.getMessage();
+    	}
+    	return ok(Json.toJson(responseVM));
+    }
     
 }

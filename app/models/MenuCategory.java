@@ -28,4 +28,8 @@ public class MenuCategory extends Model {
 		return find.where().eq("menu", menu).findList();
 	}
 	
+	public static List<MenuCategory> findByMenu(Menu menu) {
+		return find.where().eq("menu", menu).findList();
+	}
+	
 }
