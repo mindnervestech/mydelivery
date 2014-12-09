@@ -345,6 +345,25 @@ public class Application extends Controller {
 	    		time.close = format.format(restaurantHours.getRestaurantHoursClose());
 	    		timeVMList.add(time);
     		}
+    		
+    		List<Menu> menuList = Menu.findByRestaurantId(restaurant);
+    		List<MenuVM> menuVMList = new ArrayList<>();
+    		for(Menu menuName: menuList) {
+    			MenuVM vm = new MenuVM();
+    			vm.name = menuName.menuName;
+    			vm.from = format.format(menuName.menuTimeStart);
+    			vm.to = format.format(menuName.menuTimeStop);
+    			menuVMList.add(vm);
+    			List<MenuCategory> menuCategoryList = MenuCategory.findByMenu(menuName);
+    			List<MenuCategoryVM> vmList = new ArrayList<>();
+    			for(MenuCategory category : menuCategoryList) {
+    				MenuCategoryVM categoryVM = new MenuCategoryVM();
+    				categoryVM.name = category.menuCategoryName;
+    				vmList.add(categoryVM);
+    			}
+    			vm.categories = vmList;
+    		}
+    		restaurantVM.menus = menuVMList;
     		restaurantVM.time = timeVMList;
     		VMs.add(restaurantVM);
     	}

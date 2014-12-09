@@ -14,6 +14,7 @@ public class RestaurantVM {
 	public int id;
 	public String name;
 	public String description;
+	public List<MenuVM> menus = new ArrayList<>();
 	public List<RestaurantTimeVM> time = new ArrayList<>();
 	
 }
