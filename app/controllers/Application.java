@@ -347,7 +347,7 @@ public class Application extends Controller {
 	    		timeVMList.add(time);
     		}
     		
-    		List<Menu> menuList = Menu.findByRestaurantId(restaurant);
+    		/*List<Menu> menuList = Menu.findByRestaurantId(restaurant);
     		List<MenuVM> menuVMList = new ArrayList<>();
     		for(Menu menuName: menuList) {
     			MenuVM vm = new MenuVM();
@@ -364,7 +364,7 @@ public class Application extends Controller {
     			}
     			vm.categories = vmList;
     		}
-    		restaurantVM.menus = menuVMList;
+    		restaurantVM.menus = menuVMList;*/
     		restaurantVM.time = timeVMList;
     		VMs.add(restaurantVM);
     	}
