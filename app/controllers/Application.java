@@ -37,6 +37,7 @@ import play.mvc.*;
 import scala.Array;
 
 import viewmodel.AddressVM;
+import viewmodel.CredentialsVM;
 import viewmodel.MenuCategoryVM;
 import viewmodel.MenuItemComboOptionVM;
 import viewmodel.MenuItemComboVM;
@@ -58,6 +59,7 @@ import views.html.*;
 public class Application extends Controller {
   
     public static Result index() {
+    	ResponseVM responseVM = new ResponseVM();
     	try {
     		Form<LoginForm> form = DynamicForm.form(LoginForm.class).bindFromRequest();
     		String username = form.data().get("username");
@@ -74,7 +76,12 @@ public class Application extends Controller {
     				return ok(Json.toJson(new ErrorResponse(Error.E206.getCode(), Error.E206.getMessage())));
     			}
     			Error e = validate(username, password);
-    			return ok(Json.toJson(new ErrorResponse(e.getCode(), e.getMessage())));
+    			responseVM.code = "200";
+    			responseVM.message = "Login Successful!";
+    			User user = User.getUserByUserNameAndPassword(username, password);
+    			UserAddress userAddress = UserAddress.getByDefaultAddress(user);
+    			responseVM.defaultAddress = userAddress.getUserAddressId();
+    			return ok(Json.toJson(responseVM));
     		}
     	} catch(Exception e) {
     		return ok(Json.toJson(new ErrorResponse("500",e.getMessage())));
@@ -213,6 +220,8 @@ public class Application extends Controller {
     }
     
     public static class RegisterForm {
+    	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+    	public CredentialsVM credentials;
     	public String username;
     	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     	public String password;
@@ -226,6 +235,7 @@ public class Application extends Controller {
     	public String email;
     	public String language;
     	public String additionalDescription;
+    	public String additionalNumber;
     	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     	public Boolean communicationSms;
     	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
@@ -598,13 +608,18 @@ public class Application extends Controller {
     	try {
     		
 	    	User user = User.getUserByUserNameAndPassword(orderVM.credentials.username, orderVM.credentials.password);
+	    	UserAddress userAddress = new UserAddress();
 	    	if(user == null) {
 	    		responseVM.code = "211";
 	    		responseVM.message = "Invalid User";
 	    	} else {
 	    		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 	    		String dateComplete = "9999-1-1";
-	    		UserAddress userAddress = UserAddress.findById(orderVM.deliveryAddress);
+	    		if(orderVM.deliveryAddress == null) {
+	    			userAddress = UserAddress.getByDefaultAddress(user);
+	    		} else {
+	    			userAddress = UserAddress.findById(orderVM.deliveryAddress);
+	    		}
 	    		Branch branch = Branch.findByName("Branch 2");
 	    		OrderData order = new OrderData();
 	    		order.setUser(user);
@@ -686,7 +701,7 @@ public class Application extends Controller {
 	    		responseVM.message = "Invalid User";
 	    	} else {
 		    	UserAddress userAddress = new UserAddress();
-		    	userAddress.setUserAddressLabel("Default Address");
+		    	userAddress.setUserAddressLabel("Home");
 		    	userAddress.setUser(user);
 		    	userAddress.setUserAddressHouse(addressVM.house_bld);
 		    	userAddress.setUserAddressStreetName(addressVM.street);
@@ -701,5 +716,35 @@ public class Application extends Controller {
     	}
     	return ok(Json.toJson(responseVM));
     }
+    
+    public static Result updateUser() {
+    	ResponseVM responseVM = new ResponseVM();
+    	try {
+    	Form<RegisterForm> form = DynamicForm.form(RegisterForm.class).bindFromRequest();
+    	RegisterForm rForm = form.get();
+	    	User user = User.getUserByUserNameAndPassword(rForm.credentials.username, rForm.credentials.password);
+	    	if(user == null) {
+	    		responseVM.code = "211";
+	    		responseVM.message ="Invalid User";
+	    	} else {
+				user.setUserName(rForm.username);
+				user.setUserPassword(rForm.password);
+				user.setUserEmailAddress(rForm.email);
+				user.setUserFirstname(rForm.firstname);
+				user.setUserLastname(rForm.lastname);
+				user.setAdditionalNumber(rForm.additionalNumber);
+				user.setUserCommunicationEmail(rForm.communicationEmail);
+				user.setUserCommunicationSms(rForm.communicationSms);
+				user.update();
+				responseVM.code = "200";
+	    		responseVM.message = "User updated Successfully!";
+	    	}
+    	} catch(Exception e) {
+    		responseVM.code = "212";
+    		responseVM.message = e.getMessage();
+    	}
+    	return ok(Json.toJson(responseVM));
+    }
+    
     
 }

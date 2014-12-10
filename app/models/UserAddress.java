@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+import com.avaje.ebean.Expr;
+
 import play.db.ebean.Model;
 import play.db.ebean.Model.Finder;
 
@@ -70,6 +72,10 @@ public class UserAddress extends Model {
 	
 	public static UserAddress findById(Integer id) {
 		return find.byId(id);
+	}
+	
+	public static UserAddress getByDefaultAddress(User user) {
+		return find.where().eq("user", user).eq("userAddressLabel", "Default Address").findUnique();
 	}
 	
 }

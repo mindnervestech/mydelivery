@@ -24,6 +24,8 @@ public class User extends Model {
 	private String userFirstname;
 	private String userLastname;
 	private String userEmailAddress;
+	@Column(length=20)
+	private String additionalNumber;
 	@Enumerated(EnumType.STRING)
 	private Language userLanguage;
 	@Lob
@@ -144,5 +146,13 @@ public class User extends Model {
 	}
 	public void setUserStatus(Boolean userStatus) {
 		this.userStatus = userStatus;
+	}
+
+	public String getAdditionalNumber() {
+		return additionalNumber;
+	}
+
+	public void setAdditionalNumber(String additionalNumber) {
+		this.additionalNumber = additionalNumber;
 	}
 }
