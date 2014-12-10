@@ -338,6 +338,7 @@ public class Application extends Controller {
     		restaurantVM.id = restaurant.restaurantId;
     		restaurantVM.name = restaurant.restaurantName;
     		restaurantVM.description = restaurant.restaurantDescription;
+    		restaurantVM.tag = restaurant.restaurantTag;
     		for(RestaurantHours restaurantHours:restaurantHoursList) {
 	    		RestaurantTimeVM time = new RestaurantTimeVM();
 	    		time.day = restaurantHours.getRestaurantHoursDay();
