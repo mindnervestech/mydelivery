@@ -182,20 +182,22 @@ public class Application extends Controller {
     public static Result forgotPassword(String username) {
     	
     	User user = User.getUserByUserName(username);
-    	
-    	try { 
-    	SmsSender smsSender = SmsSender.getClickatellSender("Mke.manitshana@gmail.com", "ZCFEEACRJDJdQC", "3456360");
-		// The message that you want to send.
-		String msg = "Your Password "+user.getUserPassword();
-		// International number to reciever without leading "+"
-		String reciever = user.getUserName();
-		smsSender.connect();
-		String msgids = smsSender.sendTextSms(msg, reciever);
-		smsSender.disconnect(); 
-    	} catch(Exception e) {
-    		return ok(Json.toJson(new ErrorResponse("500",e.getMessage())));
+    	if(user != null) {
+	    	try { 
+	    	SmsSender smsSender = SmsSender.getClickatellSender("Mke.manitshana@gmail.com", "ZCFEEACRJDJdQC", "3456360");
+			// The message that you want to send.
+			String msg = "Your Password "+user.getUserPassword();
+			// International number to reciever without leading "+"
+			String reciever = user.getUserName();
+			smsSender.connect();
+			String msgids = smsSender.sendTextSms(msg, reciever);
+			smsSender.disconnect(); 
+	    	} catch(Exception e) {
+	    		return ok(Json.toJson(new ErrorResponse("500",e.getMessage())));
+	    	}
+    	} else {
+    		return ok(Json.toJson(new ErrorResponse(Error.E206.getCode(), Error.E206.getMessage())));
     	}
-    	
     	return ok(Json.toJson(new ErrorResponse(Error.E200.getCode(), "Password send to your registered mobile number")));
     }
     
