@@ -83,7 +83,7 @@ public class Application extends Controller {
     			if(userAddress != null) {
     				responseVM.defaultAddress = userAddress.getUserAddressId();
     			} else {
-    				return ok(Json.toJson(new ErrorResponse("500",e.getMessage())));
+    				return ok(Json.toJson(new ErrorResponse("200",e.getMessage())));
     			}
     			return ok(Json.toJson(responseVM));
     		}
