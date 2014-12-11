@@ -29,5 +29,7 @@ POST	/addAddress						controllers.Application.addAddress()
 
 POST	/updateUser						controllers.Application.updateUser()
 
+GET 	/forgotPassword/:username   	controllers.Application.forgotPassword(username:String)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

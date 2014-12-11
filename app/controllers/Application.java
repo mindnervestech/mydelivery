@@ -80,7 +80,11 @@ public class Application extends Controller {
     			responseVM.message = "Login Successful!";
     			User user = User.getUserByUserNameAndPassword(username, password);
     			UserAddress userAddress = UserAddress.getByDefaultAddress(user);
-    			responseVM.defaultAddress = userAddress.getUserAddressId();
+    			if(userAddress != null) {
+    				responseVM.defaultAddress = userAddress.getUserAddressId();
+    			} else {
+    				return ok(Json.toJson(new ErrorResponse("500",e.getMessage())));
+    			}
     			return ok(Json.toJson(responseVM));
     		}
     	} catch(Exception e) {
@@ -172,6 +176,27 @@ public class Application extends Controller {
     	} catch(Exception e) {
     		return ok(Json.toJson(new ErrorResponse("500",e.getMessage())));
     	}
+    }
+    
+    //  
+    public static Result forgotPassword(String username) {
+    	
+    	User user = User.getUserByUserName(username);
+    	
+    	try { 
+    	SmsSender smsSender = SmsSender.getClickatellSender("Mke.manitshana@gmail.com", "ZCFEEACRJDJdQC", "3456360");
+		// The message that you want to send.
+		String msg = "Your Password "+user.getUserPassword();
+		// International number to reciever without leading "+"
+		String reciever = user.getUserName();
+		smsSender.connect();
+		String msgids = smsSender.sendTextSms(msg, reciever);
+		smsSender.disconnect(); 
+    	} catch(Exception e) {
+    		return ok(Json.toJson(new ErrorResponse("500",e.getMessage())));
+    	}
+    	
+    	return ok(Json.toJson(new ErrorResponse(Error.E200.getCode(), "Password send to your registered mobile number")));
     }
     
     public static Result validateUser() {
