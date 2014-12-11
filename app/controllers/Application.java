@@ -754,14 +754,31 @@ public class Application extends Controller {
 	    		responseVM.code = "211";
 	    		responseVM.message ="Invalid User";
 	    	} else {
-				user.setUserName(rForm.username);
-				user.setUserPassword(rForm.password);
-				user.setUserEmailAddress(rForm.email);
-				user.setUserFirstname(rForm.firstname);
-				user.setUserLastname(rForm.lastname);
-				user.setAdditionalNumber(rForm.additionalNumber);
-				user.setUserCommunicationEmail(rForm.communicationEmail);
-				user.setUserCommunicationSms(rForm.communicationSms);
+	    		if( rForm.username != null) {
+	    			user.setUserName(rForm.username);
+	    		}
+	    		if(rForm.password != null) {
+	    			user.setUserPassword(rForm.password);
+	    		}
+	    		if(rForm.email != null) {
+	    			user.setUserEmailAddress(rForm.email);
+	    		}
+	    		if(rForm.firstname != null) {
+	    			user.setUserFirstname(rForm.firstname);
+	    		}
+	    		if(rForm.lastname != null) {
+	    			user.setUserLastname(rForm.lastname);
+	    		}
+	    		if(rForm.additionalNumber != null) {
+	    			user.setAdditionalNumber(rForm.additionalNumber);
+	    		}
+	    		if(rForm.communicationEmail != null) {
+	    			user.setUserCommunicationEmail(rForm.communicationEmail);
+	    		}
+	    		if(rForm.communicationSms != null) {
+	    			user.setUserCommunicationSms(rForm.communicationSms);
+	    		}
+				
 				user.update();
 				responseVM.code = "200";
 	    		responseVM.message = "User updated Successfully!";
