@@ -5,6 +5,10 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 public class AddressVM {
 
 	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	public Integer addressId;
+	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	public String addressType;
+	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 	public String username;
 	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 	public String password;

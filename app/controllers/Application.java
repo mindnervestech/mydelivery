@@ -790,5 +790,37 @@ public class Application extends Controller {
     	return ok(Json.toJson(responseVM));
     }
     
+    public static Result getAddress() {
+    	Form<CredentialsVM> form = DynamicForm.form(CredentialsVM.class).bindFromRequest();
+    	CredentialsVM credentials = form.get();
+    	ResponseVM responseVM = new ResponseVM();
+    	try {
+    	User user = User.getUserByUserNameAndPassword(credentials.username, credentials.password);
+    	if(user == null) {
+    		responseVM.code = "211";
+    		responseVM.message ="Invalid User";
+    	} else {
+	    	List<UserAddress> addressList = UserAddress.findByUser(user);
+	    	List<AddressVM> vmList = new ArrayList<>();
+	    	for(UserAddress address : addressList) {
+	    		AddressVM addressVM = new AddressVM();
+	    		addressVM.addressId = address.getUserAddressId();
+	    		addressVM.addressType = address.getUserAddressLabel();
+	    		addressVM.house_bld = address.getUserAddressHouse();
+	    		addressVM.street = address.getUserAddressStreetName();
+	    		addressVM.suburbName = address.getLocation().getLocationName();
+	    		vmList.add(addressVM);
+	    	}
+	    	responseVM.code = "200";
+	    	responseVM.message = "User Address available";
+	    	List<Object> list = new ArrayList<Object>(vmList);
+	    	responseVM.data = list;
+    	  }
+    	} catch(Exception e) {
+    		responseVM.code = "212";
+    		responseVM.message = e.getMessage();
+    	}
+    	return ok(Json.toJson(responseVM));
+    }
     
 }
