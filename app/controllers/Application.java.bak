@@ -249,7 +249,10 @@ public class Application extends Controller {
     public static class RegisterForm {
     	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     	public CredentialsVM credentials;
+    	
+    	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     	public String username;
+    	
     	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     	public String password;
     	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
@@ -758,7 +761,7 @@ public class Application extends Controller {
 	    	} else {
 	    		if( rForm.username != null) {
 	    			User userName = User.getUserByUserName(rForm.username);
-	    			if(userName == null || userName.equals(rForm.username)) {
+	    			if(userName == null || userName.getUserName().equals(rForm.username)) {
 	    				user.setUserName(rForm.username);
 	    			} else {
 	    				responseVM.code = "213";

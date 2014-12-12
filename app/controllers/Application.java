@@ -760,7 +760,7 @@ public class Application extends Controller {
 	    	} else {
 	    		if( rForm.username != null) {
 	    			User userName = User.getUserByUserName(rForm.username);
-	    			if(userName == null || userName.equals(rForm.username)) {
+	    			if(userName == null || userName.getUserName().equals(rForm.username)) {
 	    				user.setUserName(rForm.username);
 	    			} else {
 	    				responseVM.code = "213";
