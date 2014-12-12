@@ -159,4 +159,8 @@ public class OrderData extends Model {
 
 	public static Finder<Integer,OrderData> find = new Finder<>(Integer.class,OrderData.class);
 	
+	public static List<OrderData> getOrderByUser(User user) {
+		return find.where().eq("user", user).findList();
+	}
+	
 }

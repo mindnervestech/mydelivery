@@ -1,5 +1,7 @@
 package models;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -22,7 +24,7 @@ public class OrderItem extends Model {
 	private boolean orderItemBeverage;
 	private String orderItemComboOptions;
 	private String orderItemExtraOptions;
-	private int orderItemQuantity;
+	private Integer orderItemQuantity;
 	private String orderItemAdditionalInfo;
 	private double orderItemPrice;
 	
@@ -76,12 +78,15 @@ public class OrderItem extends Model {
 	public void setOrderItemPrice(double orderItemPrice) {
 		this.orderItemPrice = orderItemPrice;
 	}
-	public int getOrderItemQuantity() {
+	public Integer getOrderItemQuantity() {
 		return orderItemQuantity;
 	}
-	public void setOrderItemQuantity(int orderItemQuantity) {
+	public void setOrderItemQuantity(Integer orderItemQuantity) {
 		this.orderItemQuantity = orderItemQuantity;
 	}
 	
+	public static List<OrderItem> getItemsOfOrder(OrderData order) {
+		return find.where().eq("order", order).findList();
+	}
 	
 }

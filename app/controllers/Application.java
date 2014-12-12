@@ -728,7 +728,6 @@ public class Application extends Controller {
 	    		responseVM.message = "Invalid User";
 	    	} else {
 		    	UserAddress userAddress = new UserAddress();
-		    	userAddress.setUserAddressLabel("Home");
 		    	userAddress.setUser(user);
 		    	userAddress.setUserAddressHouse(addressVM.house_bld);
 		    	userAddress.setUserAddressStreetName(addressVM.street);
@@ -830,5 +829,94 @@ public class Application extends Controller {
     	}
     	return ok(Json.toJson(responseVM));
     }
+    
+    public static Result getOrderHistory() {
+    	Form<CredentialsVM> form = DynamicForm.form(CredentialsVM.class).bindFromRequest();
+    	CredentialsVM credentials = form.get();
+    	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    	ResponseVM responseVM = new ResponseVM();
+    	try {
+        	User user = User.getUserByUserNameAndPassword(credentials.username, credentials.password);
+        	if(user == null) {
+        		responseVM.code = "211";
+        		responseVM.message ="Invalid User";
+        	} else {
+        		List<OrderData> orderDataList = OrderData.getOrderByUser(user);
+        		List<OrderVM> orderVMList = new ArrayList<>();
+        		for(OrderData order: orderDataList) {
+        			OrderVM orderVM = new OrderVM();
+        			orderVM.orderId = order.getOrderId();
+        			orderVM.deliveryFee = order.getOrderDeliveryFee();
+        			orderVM.adminFee = order.getOrderAdminFee();
+        			orderVM.orderDate = dateFormat.format(order.getOrderDateStart());
+        			orderVM.deliveryAddress = order.getUserAddress().getUserAddressId();
+        			List<OrderItem> itemList = OrderItem.getItemsOfOrder(order);
+        			List<OrderItemVM> itemVMList = new ArrayList<>();
+        			for(OrderItem item: itemList) {
+        				OrderItemVM vm = new OrderItemVM();
+        				vm.id = item.getOrderItemId();
+        				vm.combo = item.getOrderItemComboOptions();
+        				vm.extra = item.getOrderItemExtraOptions();
+        				vm.price = item.getOrderItemPrice();
+        				if(item.getOrderItemQuantity() != null) {
+        					vm.quantity = item.getOrderItemQuantity();
+        				}
+        				vm.additionalInformation = item.getOrderItemAdditionalInfo();
+        				itemVMList.add(vm);
+        			}
+        			orderVM.items = itemVMList;
+        			orderVMList.add(orderVM);
+        		}
+        		responseVM.code = "200";
+    	    	responseVM.message = "User orders available";
+    	    	List<Object> list = new ArrayList<Object>(orderVMList);
+    	    	responseVM.data = list;
+        	}
+        } catch(Exception e) {
+        	responseVM.code = "212";
+    		responseVM.message = e.getMessage();
+        }
+    	return ok(Json.toJson(responseVM));
+    }
+    
+    public static Result updateAddress() {
+    	ResponseVM responseVM = new ResponseVM();
+    	try {
+	    	Form<AddressVM> form = DynamicForm.form(AddressVM.class).bindFromRequest();
+	    	AddressVM addressVM = form.get();
+	    	User user = User.getUserByUserNameAndPassword(addressVM.username, addressVM.password);
+	    	if(user == null) {
+	    		responseVM.code = "211";
+	    		responseVM.message = "Invalid User";
+	    	} else {
+			    	UserAddress userAddress = UserAddress.findById(addressVM.addressId);
+			    	if(userAddress != null) {
+			    		if(addressVM.house_bld != null) {
+			    			userAddress.setUserAddressHouse(addressVM.house_bld);
+			    		}
+			    		if(addressVM.street != null) {
+			    			userAddress.setUserAddressStreetName(addressVM.street);
+			    		}
+			    		if(addressVM.suburb != null) {
+			    			userAddress.setLocation(Location.findById(addressVM.suburb));
+			    		}
+			    		if(addressVM.addressType != null) {
+			    			userAddress.setUserAddressLabel(addressVM.addressType);
+			    		}
+				    	userAddress.update();
+				    	responseVM.code = "200";
+			    		responseVM.message = "Address updated Successfully!";
+			    	} else {
+			    		responseVM.code = "211";
+			    		responseVM.message = "Address not found";
+			    	}
+	    	}
+    	} catch(Exception e) {
+    		responseVM.code = "212";
+    		responseVM.message = e.getMessage();
+    	}
+    	return ok(Json.toJson(responseVM));
+    }
+    
     
 }
