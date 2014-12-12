@@ -733,6 +733,7 @@ public class Application extends Controller {
 		    	userAddress.setUserAddressHouse(addressVM.house_bld);
 		    	userAddress.setUserAddressStreetName(addressVM.street);
 		    	userAddress.setLocation(Location.findById(addressVM.suburb));
+		    	userAddress.setUserAddressLabel(addressVM.addressType);
 		    	userAddress.save();
 		    	responseVM.code = "200";
 	    		responseVM.message = "Address Saved Successfully!";
