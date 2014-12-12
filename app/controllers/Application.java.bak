@@ -249,9 +249,7 @@ public class Application extends Controller {
     public static class RegisterForm {
     	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     	public CredentialsVM credentials;
-    	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     	public String username;
-    	
     	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     	public String password;
     	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
