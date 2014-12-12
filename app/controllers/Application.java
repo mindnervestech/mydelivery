@@ -700,6 +700,8 @@ public class Application extends Controller {
 	    	vm.email = user.getUserEmailAddress();
 	    	for(UserAddress address: userAddressList) {
 	    		AddressVM addressVM = new AddressVM();
+	    		addressVM.addressId = address.getUserAddressId();
+	    		addressVM.addressType = address.getUserAddressLabel();
 	    		addressVM.house_bld = address.getUserAddressHouse();
 	    		addressVM.street = address.getUserAddressStreetName();
 	    		addressVM.suburbName = address.getLocation().getLocationName();
