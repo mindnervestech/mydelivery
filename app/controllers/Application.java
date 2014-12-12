@@ -755,7 +755,14 @@ public class Application extends Controller {
 	    		responseVM.message ="Invalid User";
 	    	} else {
 	    		if( rForm.username != null) {
-	    			user.setUserName(rForm.username);
+	    			User userName = User.getUserByUserName(rForm.username);
+	    			if(userName == null) {
+	    				user.setUserName(rForm.username);
+	    			} else {
+	    				responseVM.code = "213";
+	    	    		responseVM.message = "username you requested to change to , is already present";
+	    	    		return ok(Json.toJson(responseVM));
+	    			}
 	    		}
 	    		if(rForm.password != null) {
 	    			user.setUserPassword(rForm.password);

@@ -57,6 +57,10 @@ public class User extends Model {
 		return find.byId(id);
 	}
 	
+	public static User findByUserEmail(String email) {
+		return find.where().eq("userEmailAddress", email).findUnique();
+	}
+	
 	public Integer getUserId() {
 		return userId;
 	}
