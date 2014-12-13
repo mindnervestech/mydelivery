@@ -171,7 +171,7 @@ public class Application extends Controller {
     			smsSender.connect();
     			String msgids = smsSender.sendTextSms(msg, reciever);
     			smsSender.disconnect();*/
-    			return ok(Json.toJson(new ErrorResponse(Error.E200.getCode(), Error.E200.getMessage())));
+    			return ok(Json.toJson(new ErrorResponse(Error.E200.getCode(), Error.E204.getMessage())));
     		}
     	} catch(Exception e) {
     		return ok(Json.toJson(new ErrorResponse("500",e.getMessage())));
