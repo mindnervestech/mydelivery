@@ -116,8 +116,6 @@ public class Application extends Controller {
     				rForm.lastname.isEmpty()||
     				rForm.language==null||
     				rForm.language.isEmpty()||
-    				rForm.additionalDescription==null||
-    				rForm.additionalDescription.isEmpty()||
     				rForm.communicationEmail==null||
     				rForm.communicationSms==null) {
     			return ok(Json.toJson(new ErrorResponse(Error.E202.getCode(), Error.E202.getMessage())));
@@ -126,7 +124,7 @@ public class Application extends Controller {
     		} else {
     			try {
     				Long.parseLong(rForm.username);
-    				if(rForm.username.length()<10) {
+    				if(rForm.username.length()<9) {
     					return ok(Json.toJson(new ErrorResponse(Error.E206.getCode(), Error.E206.getMessage())));
     				} 
     			} catch(NumberFormatException e) {
@@ -137,7 +135,9 @@ public class Application extends Controller {
     			} 
     			User user = new User();
     			user.setUserName(rForm.username);
-    			user.setUserAdditionalDescription(rForm.additionalDescription);
+    			if(rForm.additionalDescription != null) {
+    				user.setUserAdditionalDescription(rForm.additionalDescription);
+    			}
     			user.setUserCommunicationEmail(rForm.communicationEmail);
     			user.setUserCommunicationSms(rForm.communicationSms);
     			user.setUserEmailAddress(rForm.email);
@@ -171,7 +171,7 @@ public class Application extends Controller {
     			smsSender.connect();
     			String msgids = smsSender.sendTextSms(msg, reciever);
     			smsSender.disconnect();*/
-    			return ok(Json.toJson(new ErrorResponse(Error.E200.getCode(), Error.E200.getMessage())));
+    			return ok(Json.toJson(new ErrorResponse(Error.E200.getCode(), Error.E204.getMessage())));
     		}
     	} catch(Exception e) {
     		return ok(Json.toJson(new ErrorResponse("500",e.getMessage())));
@@ -249,7 +249,6 @@ public class Application extends Controller {
     public static class RegisterForm {
     	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     	public CredentialsVM credentials;
-    	
     	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     	public String username;
     	
