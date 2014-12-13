@@ -116,8 +116,6 @@ public class Application extends Controller {
     				rForm.lastname.isEmpty()||
     				rForm.language==null||
     				rForm.language.isEmpty()||
-    				rForm.additionalDescription==null||
-    				rForm.additionalDescription.isEmpty()||
     				rForm.communicationEmail==null||
     				rForm.communicationSms==null) {
     			return ok(Json.toJson(new ErrorResponse(Error.E202.getCode(), Error.E202.getMessage())));
@@ -126,7 +124,7 @@ public class Application extends Controller {
     		} else {
     			try {
     				Long.parseLong(rForm.username);
-    				if(rForm.username.length()<10) {
+    				if(rForm.username.length()<9) {
     					return ok(Json.toJson(new ErrorResponse(Error.E206.getCode(), Error.E206.getMessage())));
     				} 
     			} catch(NumberFormatException e) {
@@ -137,7 +135,9 @@ public class Application extends Controller {
     			} 
     			User user = new User();
     			user.setUserName(rForm.username);
-    			user.setUserAdditionalDescription(rForm.additionalDescription);
+    			if(rForm.additionalDescription != null) {
+    				user.setUserAdditionalDescription(rForm.additionalDescription);
+    			}
     			user.setUserCommunicationEmail(rForm.communicationEmail);
     			user.setUserCommunicationSms(rForm.communicationSms);
     			user.setUserEmailAddress(rForm.email);
