@@ -188,7 +188,7 @@ public class Application extends Controller {
 			// The message that you want to send.
 			String msg = "Your Password "+user.getUserPassword();
 			// International number to reciever without leading "+"
-			String reciever = user.getUserName();
+			String reciever = "244" + user.getUserName();
 			smsSender.connect();
 			String msgids = smsSender.sendTextSms(msg, reciever);
 			smsSender.disconnect(); 

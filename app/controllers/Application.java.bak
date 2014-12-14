@@ -69,7 +69,7 @@ public class Application extends Controller {
     		} else {
     			try {
     				Long.parseLong(username);
-    				if(username.length()<10) {
+    				if(username.length()<9) {
     					return ok(Json.toJson(new ErrorResponse(Error.E206.getCode(), Error.E206.getMessage())));
     				} 
     			} catch(NumberFormatException e) {
