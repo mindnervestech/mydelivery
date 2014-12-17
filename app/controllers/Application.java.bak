@@ -79,6 +79,10 @@ public class Application extends Controller {
     			responseVM.code = "200";
     			responseVM.message = "Login Successful!";
     			User user = User.getUserByUserNameAndPassword(username, password);
+    			user.getUserVerificationCode();
+    			if(!user.getUserVerified()) {
+    				return ok(Json.toJson(new ErrorResponse("205",user.getUserVerificationCode() + " | User is not verified yet")));
+    			}
     			UserAddress userAddress = UserAddress.getByDefaultAddress(user);
     			if(userAddress != null) {
     				responseVM.defaultAddress = userAddress.getUserAddressId();
@@ -163,14 +167,14 @@ public class Application extends Controller {
     			userAddress.setUserAddressLabel("Default Address");
     			userAddress.save();
     			// Send SMS with clickatell
-    			/*SmsSender smsSender = SmsSender.getClickatellSender("Mke.manitshana@gmail.com", "ZCFEEACRJDJdQC", "3456360");
+    			SmsSender smsSender = SmsSender.getClickatellSender("Mke.manitshana@gmail.com", "ZCFEEACRJDJdQC", "3456360");
     			// The message that you want to send.
-    			String msg = "verification code "+user.getUserVerificationCode();
+    			String msg = "Verification Code " + user.getUserVerificationCode();
     			// International number to reciever without leading "+"
     			String reciever = user.getUserName();
     			smsSender.connect();
-    			String msgids = smsSender.sendTextSms(msg, reciever);
-    			smsSender.disconnect();*/
+    			String msgids = smsSender.sendTextSms(msg, "244" + reciever);
+    			smsSender.disconnect();
     			return ok(Json.toJson(new ErrorResponse(Error.E200.getCode(), Error.E204.getMessage())));
     		}
     	} catch(Exception e) {
@@ -188,7 +192,7 @@ public class Application extends Controller {
 			// The message that you want to send.
 			String msg = "Your Password "+user.getUserPassword();
 			// International number to reciever without leading "+"
-			String reciever = user.getUserName();
+			String reciever = "244" + user.getUserName();
 			smsSender.connect();
 			String msgids = smsSender.sendTextSms(msg, reciever);
 			smsSender.disconnect(); 
@@ -214,7 +218,7 @@ public class Application extends Controller {
     		} else {
     			try {
     				Long.parseLong(form.username);
-    				if(form.username.length()<10) {
+    				if(form.username.length() < 9) {
     					return ok(Json.toJson(new ErrorResponse(Error.E206.getCode(), Error.E206.getMessage())));
     				} 
     			} catch(NumberFormatException e) {
