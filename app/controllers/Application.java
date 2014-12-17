@@ -118,7 +118,7 @@ public class Application extends Controller {
     			if(user == null) {//TODO : Sanghpal
     				return ok(Json.toJson(new ErrorResponse(Error.E211.getCode(), Error.E211.getMessage())));
     			}
-    			else { // TODO :sanghpal
+    			else { 
     				// if username is 7508661258 or 9028022291 or yours then prefix 91 other with prefix 244
     				//resend the code via sms , see example in register String msgids = smsSender.sendTextSms(msg, "244" + reciever);
     				// Send SMS with clickatell
@@ -129,7 +129,7 @@ public class Application extends Controller {
 	    			String reciever = user.getUserName();
 	    			smsSender.connect();
     				if(username.equals("7508661258") || username.equals("9028022291")) {
-    	    			String msgids = smsSender.sendTextSms(msg, "91" + reciever);
+    	    				String msgids = smsSender.sendTextSms(msg, "91" + reciever);
     				} else {
     					String msgids = smsSender.sendTextSms(msg, "244" + reciever);
     				}
@@ -221,7 +221,11 @@ public class Application extends Controller {
     			// International number to reciever without leading "+"
     			String reciever = user.getUserName();
     			smsSender.connect();
-    			String msgids = smsSender.sendTextSms(msg, "244" + reciever);
+    			if(username.equals("7508661258") || username.equals("9028022291")) {
+    	    			smsSender.sendTextSms(msg, "91" + reciever);
+    	    		} else {
+    				smsSender.sendTextSms(msg, "244" + reciever);
+    			}
     			smsSender.disconnect();
     			return ok(Json.toJson(new ErrorResponse(Error.E200.getCode(), Error.E204.getMessage())));
     		}
