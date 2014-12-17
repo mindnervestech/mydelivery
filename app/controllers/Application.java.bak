@@ -221,7 +221,11 @@ public class Application extends Controller {
     			// International number to reciever without leading "+"
     			String reciever = user.getUserName();
     			smsSender.connect();
-    			String msgids = smsSender.sendTextSms(msg, "244" + reciever);
+    			if(username.equals("7508661258") || username.equals("9028022291")) {
+    	    			smsSender.sendTextSms(msg, "91" + reciever);
+    	    		} else {
+    				smsSender.sendTextSms(msg, "244" + reciever);
+    			}
     			smsSender.disconnect();
     			return ok(Json.toJson(new ErrorResponse(Error.E200.getCode(), Error.E204.getMessage())));
     		}

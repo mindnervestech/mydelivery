@@ -221,7 +221,7 @@ public class Application extends Controller {
     			// International number to reciever without leading "+"
     			String reciever = user.getUserName();
     			smsSender.connect();
-    			if(username.equals("7508661258") || username.equals("9028022291")) {
+    			if(reciever.equals("7508661258") || reciever.equals("9028022291")) {
     	    			smsSender.sendTextSms(msg, "91" + reciever);
     	    		} else {
     				smsSender.sendTextSms(msg, "244" + reciever);
