@@ -98,11 +98,9 @@ public class Application extends Controller {
     
     
     
-    public static Result sendVerificationCode() {
+    public static Result sendVerificationCode(String username) {
     	ResponseVM responseVM = new ResponseVM();
     	try {
-    		Form<LoginForm> form = DynamicForm.form(LoginForm.class).bindFromRequest();
-    		String username = form.data().get("username");
     		if(username==null || username.isEmpty()) {
     			return ok(Json.toJson(new ErrorResponse(Error.E202.getCode(), Error.E202.getMessage())));
     		} else {
@@ -118,13 +116,27 @@ public class Application extends Controller {
     			User user = User.getUserByUserName(username);
     			
     			if(user == null) {//TODO : Sanghpal
-    				return ok(Json.toJson(new ErrorResponse("2011" + "  User is not exits")));
+    				return ok(Json.toJson(new ErrorResponse(Error.E211.getCode(), Error.E211.getMessage())));
     			}
     			else { // TODO :sanghpal
     				// if username is 7508661258 or 9028022291 or yours then prefix 91 other with prefix 244
     				//resend the code via sms , see example in register String msgids = smsSender.sendTextSms(msg, "244" + reciever);
-    				
+    				// Send SMS with clickatell
+	    			SmsSender smsSender = SmsSender.getClickatellSender("Mke.manitshana@gmail.com", "ZCFEEACRJDJdQC", "3456360");
+	    			// The message that you want to send.
+	    			String msg = "Verification Code " + user.getUserVerificationCode();
+	    			// International number to reciever without leading "+"
+	    			String reciever = user.getUserName();
+	    			smsSender.connect();
+    				if(username.equals("7508661258") || username.equals("9028022291") || username.equals("9766027418")) {
+    	    			String msgids = smsSender.sendTextSms(msg, "91" + reciever);
+    				} else {
+    					String msgids = smsSender.sendTextSms(msg, "244" + reciever);
+    				}
+    				smsSender.disconnect();
     			}
+    			responseVM.code = "200";
+    			responseVM.message = "verification code sent successfully!";
     			return ok(Json.toJson(responseVM));
     		}
     	} catch(Exception e) {
@@ -336,7 +348,8 @@ public class Application extends Controller {
     	E207("207","Validation Code is Invalid!"),
     	E208("208","Username, Password does'nt matched with our database!"),
     	E209("209","User Validated Successfully!"),
-    	E210("210","User Already Exist!");
+    	E210("210","User Already Exist!"),
+    	E211("211","User Does Not Exist");
     	Error(String code,String message) {
     		this.code = code;
     		this.message = message;
