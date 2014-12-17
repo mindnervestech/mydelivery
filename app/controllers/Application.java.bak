@@ -96,6 +96,42 @@ public class Application extends Controller {
     	} 
     }
     
+    
+    
+    public static Result sendVerificationCode() {
+    	ResponseVM responseVM = new ResponseVM();
+    	try {
+    		Form<LoginForm> form = DynamicForm.form(LoginForm.class).bindFromRequest();
+    		String username = form.data().get("username");
+    		if(username==null || username.isEmpty()) {
+    			return ok(Json.toJson(new ErrorResponse(Error.E202.getCode(), Error.E202.getMessage())));
+    		} else {
+    			try {
+    				Long.parseLong(username);
+    				if(username.length()<9) {
+    					return ok(Json.toJson(new ErrorResponse(Error.E206.getCode(), Error.E206.getMessage())));
+    				} 
+    			} catch(NumberFormatException e) {
+    				return ok(Json.toJson(new ErrorResponse(Error.E206.getCode(), Error.E206.getMessage())));
+    			}
+    			
+    			User user = User.getUserByUserName(username);
+    			
+    			if(user == null) {//TODO : Sanghpal
+    				return ok(Json.toJson(new ErrorResponse("205",user.getUserVerificationCode() + " | User is not verified yet")));
+    			}
+    			else { // TODO :sanghpal
+    				// if username is 7508661258 or 9028022291 or yours then prefix 91 other with prefix 244
+    				//resend the code via sms , see example in register String msgids = smsSender.sendTextSms(msg, "244" + reciever);
+    				
+    			}
+    			return ok(Json.toJson(responseVM));
+    		}
+    	} catch(Exception e) {
+    		return ok(Json.toJson(new ErrorResponse("500",e.getMessage())));
+    	} 
+    }
+    
     public static Result register() {
     	try{
     		Form<RegisterForm> form = DynamicForm.form(RegisterForm.class).bindFromRequest();
