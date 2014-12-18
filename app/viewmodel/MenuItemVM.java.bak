@@ -13,7 +13,6 @@ public class MenuItemVM {
 	public String description;
 	public boolean isVegetarian;
 	public boolean isSpicy;
-	public boolean isMain;
 	public String daySchedule;
 	public List<MenuItemComboVM> combo = new ArrayList<>();
 	public List<MenuItemExtraVM> extra = new ArrayList<>();
