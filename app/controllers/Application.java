@@ -1,5 +1,6 @@
 package controllers;
 
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -201,7 +202,7 @@ public class Application extends Controller {
     				return ok(Json.toJson(new ErrorResponse(Error.E205.getCode(), Error.E205.getMessage())));
     			}
     			user.setUserLastname(rForm.lastname);
-    			user.setUserPassword(rForm.password);
+    			user.setUserPassword(User.md5Encryption(rForm.password));
     			user.setUserRegisterDate(new Date());
     			user.setUserVerificationCode(getRandomCode());
     			user.setUserVerified(false);
@@ -243,7 +244,10 @@ public class Application extends Controller {
 	    	try { 
 	    	SmsSender smsSender = SmsSender.getClickatellSender("Mke.manitshana@gmail.com", "ZCFEEACRJDJdQC", "3456360");
 			// The message that you want to send.
-			String msg = "Your Password "+user.getUserPassword();
+	    	String newPassword = generateRandomString(6);
+			String msg = "Your New Password "+newPassword;
+			user.setUserPassword(User.md5Encryption(newPassword));
+			user.update();
 			// International number to reciever without leading "+"
 			String reciever = "244" + user.getUserName();
 			smsSender.connect();
@@ -256,6 +260,19 @@ public class Application extends Controller {
     		return ok(Json.toJson(new ErrorResponse(Error.E206.getCode(), Error.E206.getMessage())));
     	}
     	return ok(Json.toJson(new ErrorResponse(Error.E200.getCode(), "Password send to your registered mobile number")));
+    }
+    
+    
+    public static String generateRandomString(int length) throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    	int charactersLength = characters.length();
+
+		for (int i = 0; i < length; i++) {
+			double index = Math.random() * charactersLength;
+			buffer.append(characters.charAt((int) index));
+		}
+		return buffer.toString();
     }
     
     public static Result validateUser() {
@@ -381,7 +398,7 @@ public class Application extends Controller {
     	return num+"";
     }
     
-    public static Error validate(String username,String password) {
+    public static Error validate(String username,String password) throws NoSuchAlgorithmException {
     	User user = User.getUserByUserNameAndPassword(username, password);
 		if(user==null) {
 			return Error.E201;

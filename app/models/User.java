@@ -1,5 +1,7 @@
 package models;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -41,8 +43,8 @@ public class User extends Model {
 	
 	public static Finder<Integer,User> find = new Finder<>(Integer.class,User.class);
 	
-	public static User getUserByUserNameAndPassword(String username,String password) {
-		return find.where().eq("userName", username).eq("userPassword",password).findUnique();
+	public static User getUserByUserNameAndPassword(String username,String password) throws NoSuchAlgorithmException {
+		return find.where().eq("userName", username).eq("userPassword",User.md5Encryption(password)).findUnique();
 	}
 	
 	public static User getUserByUserName(String username) {
@@ -159,4 +161,23 @@ public class User extends Model {
 	public void setAdditionalNumber(String additionalNumber) {
 		this.additionalNumber = additionalNumber;
 	}
+	
+	public static String md5Encryption(String password) throws NoSuchAlgorithmException { 
+		 MessageDigest md = MessageDigest.getInstance("MD5");
+	        md.update(password.getBytes());
+	 
+	        byte byteData[] = md.digest();
+	 
+	        //convert the byte to hex format
+	        StringBuffer sb = new StringBuffer();
+	        for (int i = 0; i < byteData.length; i++) {
+	         sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+	        }
+	 
+	        
+	        return sb.toString();
+	}
+
+	
+	
 }
