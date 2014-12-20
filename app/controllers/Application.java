@@ -27,6 +27,7 @@ import models.OrderItem;
 import models.Restaurant;
 import models.RestaurantHours;
 import models.RestaurantTag;
+import models.Setting;
 import models.User;
 import models.UserAddress;
 import play.*;
@@ -560,6 +561,11 @@ public class Application extends Controller {
 	    	Object object = restaurantMenuVM;
 	    	responseVM.code = "200";
 	    	responseVM.message = "Menu available";
+	    	responseVM.delivery_fee_day = Setting.getDeliveryFeeDay().settingValue;
+	    	responseVM.delivery_fee_night = Setting.getDeliveryFeeNight().settingValue;
+	    	responseVM.admin_fee = Setting.getAdminFee().settingValue;
+	    	responseVM.delivery_fee_day_range = Setting.getDeliveryFeeDayRange().settingValue;
+	    	responseVM.delivery_fee_night_range = Setting.getDeliveryFeeNightRange().settingValue;
 	    	responseVM.data.add(object);
     	} else {
     		responseVM.code = "212";
