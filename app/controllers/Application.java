@@ -154,8 +154,8 @@ public class Application extends Controller {
     				rForm.password.isEmpty()||
     				rForm.confirmPassword==null||
     				rForm.confirmPassword.isEmpty()||
-    				rForm.email==null||
-    				rForm.email.isEmpty()||
+    				//rForm.email==null||
+    				//rForm.email.isEmpty()||
     				rForm.firstname==null||
     				rForm.firstname.isEmpty()||
     				rForm.street==null||
