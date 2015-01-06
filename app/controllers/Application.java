@@ -207,7 +207,7 @@ public class Application extends Controller {
     			user.setUserVerificationCode(getRandomCode());
     			user.setUserVerified(false);
     			user.setUserLostPasswordCount(0);
-    			user.setUserStatus(false);
+    			user.setUserStatus(true);
     			user.save();
     			UserAddress userAddress = new UserAddress();
     			userAddress.setUser(user);
