@@ -737,8 +737,8 @@ public class Application extends Controller {
 	    		order.setBranch(branch);
 	    		order.setOrderDeliveryFee(orderVM.deliveryFee);
 	    		order.setOrderAdminFee(orderVM.adminFee);
-	    		order.setOrderDateStart(format.parse(orderVM.orderDate));
-	    		order.setOrderDateComplete(format.parse(dateComplete));
+	    		order.setOrderDateStart(new Date());
+	    		order.setOrderDateComplete(new Date());
 	    		order.setOrderNote(" ");
 	    		order.save();
 	    		for(OrderItemVM itemVM : orderVM.items) {
