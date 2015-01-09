@@ -870,6 +870,14 @@ public class Application extends Controller {
 	    		if(rForm.communicationSms != null) {
 	    			user.setUserCommunicationSms(rForm.communicationSms);
 	    		}
+	    		
+	    		if(rForm.language != null) {
+	    		  try {
+    				user.setUserLanguage(Language.valueOf(rForm.language.toLowerCase()));
+    			  } catch(IllegalArgumentException e) {
+    				return ok(Json.toJson(new ErrorResponse(Error.E205.getCode(), Error.E205.getMessage())));
+    			  }
+    			}
 				
 				user.update();
 				responseVM.code = "200";
