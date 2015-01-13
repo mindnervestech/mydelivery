@@ -187,11 +187,15 @@ public class Application extends Controller {
     			if(User.getUserByUserName(rForm.username)!=null) {
     				return ok(Json.toJson(new ErrorResponse(Error.E210.getCode(), Error.E210.getMessage())));
     			} 
+    			
+    			String header = request().getHeader("User-Agent");
     			User user = new User();
     			user.setUserName(rForm.username);
     			if(rForm.additionalDescription != null) {
     				user.setUserAdditionalDescription(rForm.additionalDescription);
     			}
+    			
+    			
     			user.setUserCommunicationEmail(rForm.communicationEmail);
     			user.setUserCommunicationSms(rForm.communicationSms);
     			user.setUserEmailAddress(rForm.email);
@@ -718,6 +722,12 @@ public class Application extends Controller {
     	try {
     		
 	    	User user = User.getUserByUserNameAndPassword(orderVM.credentials.username, orderVM.credentials.password);
+	    	if(!user.getUserVerified()) {
+	    		responseVM.code = "220";
+    			responseVM.message = e.getMessage();
+    			
+    			return ok(Json.toJson(responseVM));
+	    	}
 	    	UserAddress userAddress = new UserAddress();
 	    	if(user == null) {
 	    		responseVM.code = "211";
