@@ -722,7 +722,7 @@ public class Application extends Controller {
     	try {
     		
 	    	User user = User.getUserByUserNameAndPassword(orderVM.credentials.username, orderVM.credentials.password);
-	    	if(!user.getUserVerified()) {
+	    	if(!user.getUserStatus()) {
 	    		responseVM.code = "220";
     			responseVM.message = "Error whilst placing order,please contact client services to resolve the problem with your account";
     			return ok(Json.toJson(responseVM));
