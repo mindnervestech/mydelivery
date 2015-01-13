@@ -205,7 +205,7 @@ public class Application extends Controller {
     			user.setUserPassword(User.md5Encryption(rForm.password));
     			user.setUserRegisterDate(new Date());
     			user.setUserVerificationCode(getRandomCode());
-    			user.setUserVerified(false);
+    			user.setUserVerified(true);
     			user.setUserLostPasswordCount(0);
     			user.setUserStatus(true);
     			user.save();
@@ -738,7 +738,7 @@ public class Application extends Controller {
 	    		order.setOrderDeliveryFee(orderVM.deliveryFee);
 	    		order.setOrderAdminFee(orderVM.adminFee);
 	    		order.setOrderDateStart(new Date());
-	    		order.setOrderDateComplete(new Date());
+	    		//order.setOrderDateComplete(new Date());
 	    		order.setOrderNote(" ");
 	    		order.save();
 	    		for(OrderItemVM itemVM : orderVM.items) {
@@ -870,6 +870,14 @@ public class Application extends Controller {
 	    		if(rForm.communicationSms != null) {
 	    			user.setUserCommunicationSms(rForm.communicationSms);
 	    		}
+	    		
+	    		if(rForm.language != null) {
+	    		  try {
+    				user.setUserLanguage(Language.valueOf(rForm.language.toLowerCase()));
+    			  } catch(IllegalArgumentException e) {
+    				return ok(Json.toJson(new ErrorResponse(Error.E205.getCode(), Error.E205.getMessage())));
+    			  }
+    			}
 				
 				user.update();
 				responseVM.code = "200";

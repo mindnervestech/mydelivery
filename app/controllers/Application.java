@@ -187,6 +187,7 @@ public class Application extends Controller {
     			if(User.getUserByUserName(rForm.username)!=null) {
     				return ok(Json.toJson(new ErrorResponse(Error.E210.getCode(), Error.E210.getMessage())));
     			} 
+    			String header = request().getHeader("User-Agent");
     			User user = new User();
     			user.setUserName(rForm.username);
     			if(rForm.additionalDescription != null) {
@@ -205,7 +206,7 @@ public class Application extends Controller {
     			user.setUserPassword(User.md5Encryption(rForm.password));
     			user.setUserRegisterDate(new Date());
     			user.setUserVerificationCode(getRandomCode());
-    			user.setUserVerified(false);
+    			user.setUserVerified(true);
     			user.setUserLostPasswordCount(0);
     			user.setUserStatus(true);
     			user.save();
@@ -738,7 +739,7 @@ public class Application extends Controller {
 	    		order.setOrderDeliveryFee(orderVM.deliveryFee);
 	    		order.setOrderAdminFee(orderVM.adminFee);
 	    		order.setOrderDateStart(new Date());
-	    		order.setOrderDateComplete(new Date());
+	    		//order.setOrderDateComplete(new Date());
 	    		order.setOrderNote(" ");
 	    		order.save();
 	    		for(OrderItemVM itemVM : orderVM.items) {
