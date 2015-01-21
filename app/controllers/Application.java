@@ -13,6 +13,7 @@ import org.marre.SmsSender;
 
 
 import models.Branch;
+import models.HomeMobile;
 import models.Language;
 import models.Location;
 import models.Menu;
@@ -40,6 +41,7 @@ import scala.Array;
 
 import viewmodel.AddressVM;
 import viewmodel.CredentialsVM;
+import viewmodel.HomeMobileVM;
 import viewmodel.MenuCategoryVM;
 import viewmodel.MenuItemComboOptionVM;
 import viewmodel.MenuItemComboVM;
@@ -1018,6 +1020,23 @@ public class Application extends Controller {
     		responseVM.message = e.getMessage();
     	}
     	return ok(Json.toJson(responseVM));
+    }
+    
+    
+    
+    public static Result getHomeMobileImage() {
+    	List<HomeMobile> list = HomeMobile.getAllHomeMobileImages();
+    	HomeMobileVM mobileVM = new HomeMobileVM();
+    	List<String> english = new ArrayList<>();
+    	List<String> portuguese = new ArrayList<>();
+    	
+    	for(HomeMobile mobile: list) {
+    		english.add(mobile.homeMobileSourceEnglish);
+    		portuguese.add(mobile.homeMobileSourcePortuguese);
+    	}
+    	mobileVM.English = english;
+    	mobileVM.Potruguese = portuguese;
+    	return ok(Json.toJson(mobileVM));
     }
     
     
