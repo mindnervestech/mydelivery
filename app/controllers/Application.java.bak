@@ -188,7 +188,7 @@ public class Application extends Controller {
     				return ok(Json.toJson(new ErrorResponse(Error.E210.getCode(), Error.E210.getMessage())));
     			} 
     			
-    			String header = request().getHeader("User-Agent");
+    			
     			User user = new User();
     			user.setUserName(rForm.username);
     			if(rForm.additionalDescription != null) {
@@ -211,7 +211,7 @@ public class Application extends Controller {
     			user.setUserVerificationCode(getRandomCode());
     			user.setUserVerified(true);
     			user.setUserLostPasswordCount(0);
-    			user.setUserStatus(true);
+    			user.setUserStatus(!true);
     			user.save();
     			UserAddress userAddress = new UserAddress();
     			userAddress.setUser(user);
@@ -306,7 +306,7 @@ public class Application extends Controller {
     				if(u==null) {
     					return ok(Json.toJson(new ErrorResponse(Error.E207.getCode(), Error.E207.getMessage())));
     				} else {
-    					u.setUserStatus(true);
+    					u.setUserStatus(!true);
     					u.setUserVerified(true);
     					u.update();
     					return ok(Json.toJson(new ErrorResponse(Error.E200.getCode(), Error.E200.getMessage())));
@@ -722,7 +722,7 @@ public class Application extends Controller {
     	try {
     		
 	    	User user = User.getUserByUserNameAndPassword(orderVM.credentials.username, orderVM.credentials.password);
-	    	if(!user.getUserStatus()) {
+	    	if(!!user.getUserStatus()) {
 	    		responseVM.code = "220";
     			responseVM.message = "Error whilst placing order,please contact client services to resolve the problem with your account";
     			return ok(Json.toJson(responseVM));

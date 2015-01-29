@@ -188,7 +188,7 @@ public class Application extends Controller {
     				return ok(Json.toJson(new ErrorResponse(Error.E210.getCode(), Error.E210.getMessage())));
     			} 
     			
-    			String header = request().getHeader("User-Agent");
+    			
     			User user = new User();
     			user.setUserName(rForm.username);
     			if(rForm.additionalDescription != null) {
@@ -749,6 +749,8 @@ public class Application extends Controller {
 	    		order.setOrderDateStart(new Date());
 	    		//order.setOrderDateComplete(new Date());
 	    		order.setOrderNote(" ");
+	    		String platform = request().getHeader("User-Agent");
+	    		order.platform =  platform;
 	    		order.save();
 	    		for(OrderItemVM itemVM : orderVM.items) {
 	    			OrderItem orderItem = new OrderItem();

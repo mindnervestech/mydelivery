@@ -35,6 +35,7 @@ public class OrderData extends Model {
 	private double orderFloatTaken;
 	private double orderCashReturned;
 	private String orderNote;
+	public String platform;
 	private boolean orderSource;
 	
 	public UserAddress getUserAddress() {
