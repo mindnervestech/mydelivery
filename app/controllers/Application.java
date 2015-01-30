@@ -751,8 +751,8 @@ public class Application extends Controller {
 	    		order.setOrderDateStart(new Date());
 	    		//order.setOrderDateComplete(new Date());
 	    		order.setOrderNote(" ");
-	    		String platform = request().getHeader("User-Agent");
-	    		order.platform =  platform;
+	    		String order_source = request().getHeader("order_source");
+	    		order.setOrderStatus(order_source);
 	    		order.save();
 	    		for(OrderItemVM itemVM : orderVM.items) {
 	    			OrderItem orderItem = new OrderItem();
