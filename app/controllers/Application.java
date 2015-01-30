@@ -752,7 +752,11 @@ public class Application extends Controller {
 	    		//order.setOrderDateComplete(new Date());
 	    		order.setOrderNote(" ");
 	    		String order_source = request().getHeader("order_source");
-	    		order.setOrderStatus(order_source);
+	    		System.out.println("order_source:" + order_source);
+	    		try{
+	    			order.setOrderStatus(Integer.parseInt(order_source));
+	    		
+	    		}catch(Exception e) {}
 	    		order.save();
 	    		for(OrderItemVM itemVM : orderVM.items) {
 	    			OrderItem orderItem = new OrderItem();
