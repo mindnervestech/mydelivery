@@ -101,11 +101,11 @@ public class OrderData extends Model {
 		this.agentId = agentId;
 	}
 
-	public int getOrderStatus() {
+	public boolean isOrderStatus() {
 		return orderStatus;
 	}
 
-	public void setOrderStatus(int orderStatus) {
+	public void setOrderStatus(boolean orderStatus) {
 		this.orderStatus = orderStatus;
 	}
 
@@ -133,11 +133,11 @@ public class OrderData extends Model {
 		this.orderNote = orderNote;
 	}
 
-	public boolean isOrderSource() {
+	public int getOrderSource() {
 		return orderSource;
 	}
 
-	public void setOrderSource(boolean orderSource) {
+	public void setOrderSource(int orderSource) {
 		this.orderSource = orderSource;
 	}
 

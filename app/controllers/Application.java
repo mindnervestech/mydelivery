@@ -754,7 +754,7 @@ public class Application extends Controller {
 	    		String order_source = request().getHeader("order_source");
 	    		System.out.println("order_source:" + order_source);
 	    		try{
-	    			order.setOrderStatus(Integer.parseInt(order_source));
+	    			order.setOrderSource(Integer.parseInt(order_source));
 	    		
 	    		}catch(Exception e) {}
 	    		order.save();
