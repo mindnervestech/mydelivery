@@ -11,6 +11,8 @@ import java.util.Random;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.marre.SmsSender;
 
+import com.notnoop.apns.APNS;
+import com.notnoop.apns.ApnsService;
 
 import models.Branch;
 import models.HomeMobile;
@@ -1039,5 +1041,26 @@ public class Application extends Controller {
     	return ok(Json.toJson(mobileVM));
     }
     
-    
+    public static Result sendPushNotification(String deviceToken) {
+    	System.out.println("sendPushNotification");
+    	
+    	String certificate = "C:\\workspace\\mindnerves\\iOs_Development\\PushChatKey.p12";
+    	String password = "";
+    	
+    	ApnsService service =
+		    APNS.newService()
+		    .withCert(certificate, password)
+		    .withSandboxDestination()
+		    .build();
+    	
+    	String payload = APNS.newPayload().alertBody("Testing push notification!").build();
+    	service.push(deviceToken, payload);
+    	
+    	ResponseVM responseVM = new ResponseVM();
+    	responseVM.code = "200";
+		responseVM.message = "Send Notification Successful!";
+		System.out.print(responseVM);
+		System.out.println("Sending notification messgages!");
+    	return ok(Json.toJson(responseVM));
+    }
 }
