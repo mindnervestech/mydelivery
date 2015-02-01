@@ -192,7 +192,7 @@ public class Application extends Controller {
     				return ok(Json.toJson(new ErrorResponse(Error.E210.getCode(), Error.E210.getMessage())));
     			} 
     			
-    			String header = request().getHeader("User-Agent");
+    			
     			User user = new User();
     			user.setUserName(rForm.username);
     			if(rForm.additionalDescription != null) {
@@ -753,6 +753,12 @@ public class Application extends Controller {
 	    		order.setOrderDateStart(new Date());
 	    		//order.setOrderDateComplete(new Date());
 	    		order.setOrderNote(" ");
+	    		String order_source = request().getHeader("order_source");
+	    		System.out.println("order_source:" + order_source);
+	    		try{
+	    			order.setOrderSource(Integer.parseInt(order_source));
+	    		
+	    		}catch(Exception e) {}
 	    		order.save();
 	    		for(OrderItemVM itemVM : orderVM.items) {
 	    			OrderItem orderItem = new OrderItem();

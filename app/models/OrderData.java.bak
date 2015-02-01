@@ -133,11 +133,11 @@ public class OrderData extends Model {
 		this.orderNote = orderNote;
 	}
 
-	public int getOrderSource() {
+	public boolean isOrderSource() {
 		return orderSource;
 	}
 
-	public void setOrderSource(int orderSource) {
+	public void setOrderSource(boolean orderSource) {
 		this.orderSource = orderSource;
 	}
 
