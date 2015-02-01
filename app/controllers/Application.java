@@ -1050,7 +1050,7 @@ public class Application extends Controller {
     public static Result sendPushNotification(String deviceToken) {
     	System.out.println("sendPushNotification");
     	
-    	String certificate = "C:\\workspace\\mindnerves\\iOs_Development\\PushChatKey.p12";
+    	String certificate = "PushChatKey.p12";
     	String password = "";
     	
     	ApnsService service =
