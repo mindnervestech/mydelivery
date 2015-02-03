@@ -63,7 +63,7 @@ import viewmodel.UserDetailsVM;
 import views.html.*;
 
 public class Application extends Controller {
-  
+	public static final String lCertificate = Play.application().configuration().getString("certificate_loc");
     public static Result index() {
     	ResponseVM responseVM = new ResponseVM();
     	try {
