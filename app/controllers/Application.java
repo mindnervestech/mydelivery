@@ -1048,23 +1048,21 @@ public class Application extends Controller {
     }
     
     public static Result sendPushNotification(String deviceToken) {
-    	System.out.println("sendPushNotification");
-    	
-    	String certificate = "PushChatKey.p12";
+    	System.out.println("sendPushNotification " + lCertificate);
     	String password = "";
-    	
+    	 
     	ApnsService service =
 		    APNS.newService()
-		    .withCert(certificate, password)
+		    .withCert(lCertificate, password)
 		    .withSandboxDestination()
 		    .build();
-    	
+    	System.out.println("sendPushNotification");
     	String payload = APNS.newPayload().alertBody("Testing push notification!").build();
-    	service.push(deviceToken, payload);
-    	
+    	com.notnoop.apns.ApnsNotification notification = service.push(deviceToken, payload);
+    	System.out.println("sendPushNotification");
     	ResponseVM responseVM = new ResponseVM();
     	responseVM.code = "200";
-		responseVM.message = "Send Notification Successful!";
+		responseVM.message = notification.toString();
 		System.out.print(responseVM);
 		System.out.println("Sending notification messgages!");
     	return ok(Json.toJson(responseVM));
