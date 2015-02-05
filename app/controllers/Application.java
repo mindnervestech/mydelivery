@@ -1075,7 +1075,7 @@ public class Application extends Controller {
 		    .withCert(lCertificate, password)
 		    .withSandboxDestination()
 		    .build();
-	String desc =   news.getNewsDescription().length < 99 ? news.getNewsDescription() : news.getNewsDescription().substring(0,100);
+	String desc =   news.getNewsDescription().length() < 99 ? news.getNewsDescription() : news.getNewsDescription().substring(0,100);
     	String payload = APNS.newPayload().alertBody(news.getNewsHeader() + ":" + desc).build();
     	com.notnoop.apns.ApnsNotification notification = service.push(deviceToken, payload);
     	ResponseVM responseVM = new ResponseVM();
