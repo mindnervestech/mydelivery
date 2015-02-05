@@ -22,7 +22,7 @@ public class Global extends GlobalSettings {
 		ActorSystem getLiveGame = Akka.system();
 		getLiveGame.scheduler().schedule(
 				Duration.create(1000, TimeUnit.MILLISECONDS),
-				Duration.create(60*10, TimeUnit.SECONDS), new Runnable() {
+				Duration.create(6, TimeUnit.HOURS), new Runnable() {
 					public void run() {
 						try {
 								List<News> newsList = News.getAllNewNews();
