@@ -15,6 +15,7 @@ import com.notnoop.apns.APNS;
 import com.notnoop.apns.ApnsService;
 
 import models.Branch;
+import models.DeviceId;
 import models.HomeMobile;
 import models.Language;
 import models.Location;
@@ -1047,7 +1048,25 @@ public class Application extends Controller {
     	return ok(Json.toJson(mobileVM));
     }
     
-    public static Result sendPushNotification(String deviceToken) {
+    public static Result saveDeviceID(String deviceId) {
+    	ResponseVM responseVM = new ResponseVM();
+    	DeviceId dv = DeviceId.findById(deviceId);
+    	if(dv == null) {
+	    	DeviceId device = new DeviceId();
+	    	device.id = deviceId;
+	    	device.save();
+	    	responseVM.code = "200";
+	    	responseVM.message = "Device Saved Successfully!";
+	    	return ok(Json.toJson(responseVM));
+    	} else {
+    		responseVM.code = "210";
+	    	responseVM.message = "Device Already Exists!";
+    		return ok(Json.toJson(responseVM));
+    	}
+    	
+    }
+    
+    public static Result sendPushNotification(String deviceToken, News news) {
     	System.out.println("sendPushNotification " + lCertificate);
     	String password = "";
     	 
@@ -1057,7 +1076,7 @@ public class Application extends Controller {
 		    .withSandboxDestination()
 		    .build();
     	System.out.println("sendPushNotification");
-    	String payload = APNS.newPayload().alertBody("Testing push notification!").build();
+    	String payload = APNS.newPayload().alertBody(news.getNewsHeader() + ":"+news.getNewsDescription().substring(0,100)).build();
     	com.notnoop.apns.ApnsNotification notification = service.push(deviceToken, payload);
     	System.out.println("sendPushNotification");
     	ResponseVM responseVM = new ResponseVM();

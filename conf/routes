@@ -39,8 +39,11 @@ POST	/updateAddress					controllers.Application.updateAddress()
 
 GET		/sendVerificationCode/:username		controllers.Application.sendVerificationCode(username:String)
 
-GET 	/sendPushNotification			controllers.Application.sendPushNotification(deviceToken: String)
+#GET 	/sendPushNotification			controllers.Application.sendPushNotification(deviceToken: String)
 	
 GET		/getHomeMobileImage				controllers.Application.getHomeMobileImage()
+
+GET		/saveDeviceID/:deviceId			controllers.Application.saveDeviceID(deviceId: String)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

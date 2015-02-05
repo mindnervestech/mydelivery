@@ -22,9 +22,16 @@ public class News extends Model {
 	private String newsImage;
 	private String newsImageThumb;
 	private Date newsDate;
+	private boolean isNew;
 	
 	public static Finder<Integer,News> find = new Finder<>(Integer.class,News.class);
 	
+	public boolean isNew() {
+		return isNew;
+	}
+	public void setNew(boolean isNew) {
+		this.isNew = isNew;
+	}
 	public Integer getNewsId() {
 		return newsId;
 	}
@@ -83,6 +90,10 @@ public class News extends Model {
 	
 	public static News findById(Integer id) {
 		return find.byId(id);
+	}
+	
+	public static List<News> getAllNewNews() {
+		return find.where().eq("isNew", false).findList();
 	}
 	
 }
