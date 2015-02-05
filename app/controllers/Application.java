@@ -1075,15 +1075,13 @@ public class Application extends Controller {
 		    .withCert(lCertificate, password)
 		    .withSandboxDestination()
 		    .build();
-    	System.out.println("sendPushNotification");
-    	String payload = APNS.newPayload().alertBody(news.getNewsHeader() + ":"+news.getNewsDescription().substring(0,100)).build();
+	String desc =   news.getNewsDescription().length < 99 ? news.getNewsDescription() : news.getNewsDescription().substring(0,100);
+    	String payload = APNS.newPayload().alertBody(news.getNewsHeader() + ":" + desc).build();
     	com.notnoop.apns.ApnsNotification notification = service.push(deviceToken, payload);
-    	System.out.println("sendPushNotification");
     	ResponseVM responseVM = new ResponseVM();
     	responseVM.code = "200";
 		responseVM.message = notification.toString();
-		System.out.print(responseVM);
-		System.out.println("Sending notification messgages!");
+		
     	return ok(Json.toJson(responseVM));
     }
 }
